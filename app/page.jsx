@@ -19,7 +19,7 @@ export default function Home() {
 
   return (
     <main className="container mx-auto flex justify-center">
-      <div className="w-1/2 mt-8">
+      <div className="lg:w-1/2 mt-8 px-6 lg:px-0">
         <div className="bg-white pt-6 pb-0 border rounded-2xl overflow-hidden text-gray-600">
           <div className="flex px-6">
             <div className="rounded-xl">
@@ -43,7 +43,8 @@ export default function Home() {
           </div>
         </div>
 
-        <PostItem />
+        <PostItem image={false} />
+        <PostItem image={true} />
       </div>
       
     </main>
