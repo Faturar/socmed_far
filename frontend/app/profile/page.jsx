@@ -19,14 +19,14 @@ export default function Home() {
 
   return (
     <main className="container mx-auto flex justify-center">
-      <div className="lg:w-1/2 mt-8 px-6 lg:px-0">
-        <div className="bg-white pt-6 pb-0 border rounded-2xl overflow-hidden text-gray-600">
+      <div className="lg:w-1/2 mt-8 px-6 xl:px-0">
+        <div className="bg-white mb-6 pt-6 pb-0 shadow-xs rounded-2xl overflow-hidden text-gray-600">
           <div className="flex px-6">
             <div className="rounded-xl">
               <Image className="w-10 h-10" src={profileImg} />
             </div>
             <div className="w-full">
-              <textarea className="h-20 ml-4 py-2 px-3 w-full outline-none" placeholder="Write something ..."></textarea>
+              <textarea className="h-16 lg:h-20 ml-4 py-2 px-3 w-full outline-none" placeholder="Write something ..."></textarea>
             </div>
           </div>
           <div className="flex justify-between bg-blue-50">

@@ -9,21 +9,21 @@ import { DotsThree, ThumbsUp, ChatCircleDots, Share, PaperPlaneRight, Trash } fr
 import profileImg from '../public/assets/image/profile2.png'
 import postImg from '../public/assets/image/post-image.png'
 
-export default function PostItem({ image }) {
+export default function PostItem({ profile, post }) {
   const [dropdown, setDropdown] = useState(false);
 
   return (
-    <div className="mt-6">
-      <div className="bg-white p-6 border rounded-2xl overflow-hidden">
+    <div className="mb-8">
+      <div className="bg-white mx-4 sm:mx-0 p-6 drop-shadow-sm rounded-2xl overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div className="flex"> 
             <div className="rounded-xl">
-              <Image className="w-12 h-12" src={profileImg} />
+              <Image className="w-12 h-12" src={profile.image} alt="" />
             </div>
             <div className="ml-3">
-              <h4>Karim Saif</h4>
-              <span className="text-sm text-gray-400">UI/UX Designer</span>
+              <h4>{profile.username}</h4>
+              <span className="text-sm text-gray-400">{profile.role}</span>
             </div>
           </div>
           
@@ -43,8 +43,8 @@ export default function PostItem({ image }) {
 
         {/* Content */}
         <div className="flex flex-col mt-4">
-          <Image src={image ? postImg : ''} className={`${image ? 'block' : 'hidden'} rounded-xl`} />
-          <p className={`${image ? 'mt-4' : ''}`}>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nulla corrupti cum explicabo dolor repellat maiores.</p>
+          <Image src={post.image} className={`${post.image !== '' ? 'block' : 'hidden'} rounded-xl`} alt="" />
+          <p className={`${post.image !== '' ? 'mt-4' : ''}`}>{post.content}</p>
         </div>
 
         {/* Footer */}
@@ -54,13 +54,13 @@ export default function PostItem({ image }) {
               <button type="button">
                 <ThumbsUp size={24} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
               </button>
-              <span className="ml-2">1</span>
+              <span className="ml-2">{post.like}</span>
             </div>
             <div className="flex">
               <button type="button">
                 <ChatCircleDots size={24} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
               </button>
-              <span className="ml-2">1</span>
+              <span className="ml-2">{post.comment.length}</span>
             </div>
             <div className="w-full flex justify-end">
               <button type="button">
@@ -68,7 +68,7 @@ export default function PostItem({ image }) {
               </button>
             </div>
           </div>
-          <div className="mt-8 py-2 px-2 bg-gray-100 rounded-xl">
+          <div className="mt-6 py-2 px-2 bg-gray-100 rounded-xl">
             <div className="flex justify-between items-center">
               <div className="w-1/12">
                 <Image className="w-8" src={profileImg} alt="Profile" />

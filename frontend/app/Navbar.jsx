@@ -13,7 +13,7 @@ import profileImg from '../public/assets/image/profile1.png'
 
 export default function Navbar() {
   return (
-    <nav className=' bg-white text-gray-600'>
+    <nav className=' bg-white text-gray-600 drop-shadow-sm'>
         <div className="container flex justify-start md:justify-between mx-auto p-6 md:px-8 lg:px-0">
             <div className='w-1/4 pr-6 lg:pr-0 flex items-center'>
                 <Image src={logo} alt="Logo" />
