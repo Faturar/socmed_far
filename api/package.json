@@ -1,0 +1,18 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend from socmed far",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "server": "nodemon server.js"
+  },
+  "author": "faturar",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mysql2": "^3.1.2",
+    "nodemon": "^2.0.20"
+  }
+}
