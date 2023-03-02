@@ -9,9 +9,9 @@ export default app => {
 
     router.get("/:id", getUser);
 
-    router.post("/", imageUpload.fields([{ name: 'profile_bg', maxCount: 1 }, { name: 'profile_img', maxCount: 1 }]), create);
+    router.post("/", imageUpload.fields([{ name: 'profile_bg', maxCount: 1 }, { name: 'profileBg', maxCount: 1 }]), create);
 
-    router.put("/:id", imageUpload.fields([{ name: 'profile_bg', maxCount: 1 }, { name: 'profile_img', maxCount: 1 }]), update);
+    router.put("/:id", imageUpload.fields([{ name: 'profile_bg', maxCount: 1 }, { name: 'profileImg', maxCount: 1 }]), update);
 
     router.delete("/:id", deleteUser);
 
