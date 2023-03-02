@@ -1,0 +1,13 @@
+List feature:
+    Post ✅
+        - upload image ✅
+        - find ✅
+        - findall ✅
+        - create ✅
+        - update ✅
+        - delete ✅
+    Profile/user
+        -
+    Notification
+    Comment
+    Like
