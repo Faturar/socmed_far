@@ -7,7 +7,22 @@ List feature:
         - update ✅
         - delete ✅
     Profile/user
-        -
+        - upload image ✅
+        - find ✅
+        - findall ✅
+        - create ✅
+        - update ✅
+        - delete ✅
     Notification
-    Comment
-    Like
+    Comment ✅
+        - find ✅
+        - findall ✅
+        - create ✅
+        - update ✅
+        - delete ✅
+    Like ✅
+        - find ✅
+        - findall ✅
+        - create ✅
+        - update ✅
+        - delete ✅
