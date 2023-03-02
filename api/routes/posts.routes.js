@@ -1,4 +1,6 @@
 import express from 'express'
+import imageUpload from '../controllers/imageUpload.controller.js'
+
 import { getPosts, getPost, create, update, deletePost } from '../controllers/posts.controller.js';
 
 export default app => {
@@ -8,9 +10,9 @@ export default app => {
 
     router.get("/:id", getPost);
 
-    router.post("/", create);
+    router.post("/", imageUpload.single("image"), create);
 
-    router.put("/:id", update);
+    router.put("/:id", imageUpload.single("image"), update);
 
     router.delete("/:id", deletePost);
 
