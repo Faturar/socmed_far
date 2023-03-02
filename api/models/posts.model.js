@@ -1,6 +1,53 @@
 import pool from '../db/connect.js'
 
-export const getPosts = async () => {
-    const [rows] = await pool.query("SELECT * FROM posts")
-    return rows
+export const getAllPosts = async () => {
+    try {
+        const [ rows ] = await pool.query("SELECT * FROM posts")
+        return rows
+    } catch(err){
+        return err
+    }
+}
+
+export const getPostById = async (id) => {
+    try {
+        const [ rows ] = await pool.query("SELECT * FROM posts WHERE id = ?", [id]);
+        return rows
+    } catch(err) {
+        return err
+    }
+}
+
+export const createPostData = async (data) => {
+    try {
+        const { userId, image, content } = data;
+
+        const [ rows ] = await pool.query("INSERT INTO posts (user_id, image, content) VALUES (?, ?, ?)", [userId, image, content]);
+        
+        return rows.insertId
+    } catch(err) {
+        return err
+    }
+}
+
+export const updatePostData = async (id, data) => {
+    try {
+        const {userId, image, content} = data;
+
+        const [ rows ] = await pool.query("UPDATE posts SET user_id = ?, image = ?, content = ? WHERE id = ?", [userId, image, content, id])
+
+        return rows
+    } catch(err) {
+        return err
+    }
+}
+
+export const deletePostData = async (id) => {
+    try {
+        const [ rows ] = await pool.query("DELETE FROM posts WHERE id = ?", [id])
+
+        return rows
+    } catch(err) {
+        return err
+    }
 }
