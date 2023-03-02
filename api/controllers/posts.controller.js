@@ -77,11 +77,11 @@ export const update = async (req, res) => {
         // get body data
         const { userId, content } = req.body;
 
-        // get image data
-        const image = req.file ? req.file.filename : null
-
         // get old data to delete image
         const [ oldPost ] = await getPostById(id)
+
+        // get image data
+        const image = req.file ? req.file.filename : oldPost.image
 
         // Delete image on storge
         if(image !== null && fs.existsSync(path.join(__dirname, '../public/') + oldPost.image)) {
