@@ -18,7 +18,7 @@ export const getPosts = async (req, res) => {
         })
     } catch(err) {
         return res.status(500).send({
-            message: "Cannot get all posts data, cause server error.", 
+            message: "Cannot get all posts data.", 
             err: err.message
         })
     }
@@ -36,7 +36,7 @@ export const getPost = async (req, res) => {
         });
     } catch(err) {
         return res.status(500).json({
-            message: "Cannot get post data, cause server error.", err: err.message
+            message: "Cannot get post data.", err: err.message
         })
     }
 }
@@ -137,7 +137,7 @@ export const deletePost = async (req, res) => {
         }
     }  catch(err) {
         return res.status(500).json({
-            message: "Cannot delete post data, cause server error.", 
+            message: "Cannot delete post data.", 
             err: err.message
         })
     }

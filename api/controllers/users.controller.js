@@ -17,7 +17,7 @@ export const getUsers = async (req, res) => {
             data: users
         })
     } catch(err) {
-        return res.status(500).send({message: "Cannot get all users data, cause server error.", err: err.message})
+        return res.status(500).send({message: "Cannot get all users data.", err: err.message})
     }
 }
 
@@ -32,7 +32,7 @@ export const getUser = async (req, res) => {
             data: user
         });
     } catch(err) {
-        return res.status(500).json({message: "Cannot get user data, cause server error.", err: err.message})
+        return res.status(500).json({message: "Cannot get user data.", err: err.message})
     }
 }
 
@@ -41,8 +41,8 @@ export const create = async (req, res) => {
         const { username, name, role, email, password, address } = req.body;
 
         // get image data
-        const profileBg = req.files.profile_bg ? req.files.profile_bg[0].filename : null
-        const profileImg = req.files.profile_img ? req.files.profile_img[0].filename : null
+        const profileBg = req.files.profileBg ? req.files.profileBg[0].filename : null
+        const profileImg = req.files.profileImg ? req.files.profileImg[0].filename : null
 
         const data = {
             profileBg, profileImg,
@@ -60,7 +60,7 @@ export const create = async (req, res) => {
             data: user
         })
     } catch(err) {
-        return res.status(500).json({message: "Cannot create user data, cause server error.", err: err.message})
+        return res.status(500).json({message: "Cannot create user data.", err: err.message})
     }
 }
 
@@ -73,8 +73,8 @@ export const update = async (req, res) => {
         const [ oldUser ] = await getUserById(id)
 
         // get image data
-        const profileBg = req.files.profile_bg ? req.files.profile_bg[0].filename : oldUser.profile_bg
-        const profileImg = req.files.profile_img ? req.files.profile_img[0].filename : oldUser.profile_img
+        const profileBg = req.files.profileBg ? req.files.profileBg[0].filename : oldUser.profile_bg
+        const profileImg = req.files.profileImg ? req.files.profileImg[0].filename : oldUser.profile_img
 
         const data = {
             profileBg, profileImg,
@@ -131,6 +131,6 @@ export const deleteUser = async (req, res) => {
             });
         }
     }  catch(err) {
-        return res.status(500).json({message: "Cannot delete user data, cause server error.", err: err.message})
+        return res.status(500).json({message: "Cannot delete user data.", err: err.message})
     }
 }

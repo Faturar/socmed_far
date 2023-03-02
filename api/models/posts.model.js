@@ -5,7 +5,7 @@ export const getAllPosts = async () => {
         const [ rows ] = await pool.query("SELECT * FROM posts")
         return rows
     } catch(err){
-        return err
+        return err.message
     }
 }
 
@@ -14,7 +14,7 @@ export const getPostById = async (id) => {
         const [ rows ] = await pool.query("SELECT * FROM posts WHERE id = ?", [id]);
         return rows
     } catch(err) {
-        return err
+        return err.message
     }
 }
 
@@ -26,7 +26,7 @@ export const createPostData = async (data) => {
         
         return rows.insertId
     } catch(err) {
-        return err
+        return err.message
     }
 }
 
@@ -38,7 +38,7 @@ export const updatePostData = async (id, data) => {
 
         return rows
     } catch(err) {
-        return err
+        return err.message
     }
 }
 
@@ -48,6 +48,6 @@ export const deletePostData = async (id) => {
 
         return rows
     } catch(err) {
-        return err
+        return err.message
     }
 }
