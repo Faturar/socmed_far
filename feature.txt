@@ -14,6 +14,10 @@ List feature:
         - update ✅
         - delete ✅
     Notification
+        - find
+        - findAll
+        - create
+        - delete
     Comment ✅
         - find ✅
         - findall ✅

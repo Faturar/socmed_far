@@ -2,6 +2,7 @@ import postsRoutes from './posts.routes.js'
 import usersRoutes from './users.routes.js'
 import likesRoutes from './likes.routes.js'
 import commentsRoutes from './comments.routes.js'
+import notificationRoutes from './notifications.routes.js'
 
 export default app => {
     // posts route
@@ -15,4 +16,7 @@ export default app => {
 
     // comments route
     commentsRoutes(app)
+
+    // Notif route
+    notificationRoutes(app)
 }
