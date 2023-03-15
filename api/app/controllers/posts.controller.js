@@ -1,21 +1,17 @@
 import fs from 'fs'
 import path, {dirname} from 'path'
 import { fileURLToPath } from 'url';
+import { getAllPosts, getPostById, createPostData, updatePostData, deletePostData } from '../models/posts.model.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-import { getAllPosts, getPostById, createPostData, updatePostData, deletePostData } from '../models/posts.model.js'
 
 // Get posts
 export const getPosts = async (req, res) => {
     try {
         const posts = await getAllPosts();
 
-        return res.status(200).json({
-            message: "Success find all post data!",
-            data: posts
-        })
+        return res.status(200).json(posts)
     } catch(err) {
         return res.status(500).send({
             message: "Cannot get all posts data.", 
@@ -30,10 +26,7 @@ export const getPost = async (req, res) => {
 
         const [ post ] = await getPostById(id);
 
-        return res.status(200).json({
-            message: "Success find post data!",
-            data: post
-        });
+        return res.status(200).json(post);
     } catch(err) {
         return res.status(500).json({
             message: "Cannot get post data.", err: err.message
@@ -45,13 +38,15 @@ export const create = async (req, res) => {
     try {
         const { userId, content } = req.body;
 
-        const image = req.file ? req.file.filename : null
+        const image = req.file ? req.file.filename : null;
         
         const data = {
             userId,
             image,
-            content
+            content,
         }
+
+        // console.log(date)
 
         const postId = await createPostData(data)
 
@@ -89,7 +84,12 @@ export const update = async (req, res) => {
         }
 
         // init data to update
-        const data = { userId, image, content}
+        const data = { 
+            userId, 
+            image,
+            content,
+            created_at: oldPost.created_at,
+        }
 
         // update post data
         const update = await updatePostData(id, data)

@@ -5,10 +5,7 @@ export const getLikes = async (req, res) => {
     try {
         const likes = await getAllLikes();
 
-        return res.status(200).json({
-            message: "Success find all like data!",
-            data: likes
-        })
+        return res.status(200).json(likes)
     } catch(err) {
         return res.status(500).send({message: "Cannot get all likes data.", err: err.message})
     }
@@ -20,10 +17,7 @@ export const getLike = async (req, res) => {
 
         const [ like ] = await getLikeById(id);
 
-        return res.status(200).json({
-            message: "Success find like data!",
-            data: like
-        });
+        return res.status(200).json(like);
     } catch(err) {
         return res.status(500).json({message: "Cannot get like data.", err: err.message})
     }

@@ -20,9 +20,9 @@ export const getLikeById = async (id) => {
 
 export const createLikeData = async (data) => {
     try {
-        const { userId, postId } = data;
+        const { userId, postId, created_at } = data;
 
-        const [ rows ] = await pool.query("INSERT INTO likes (user_id, post_id) VALUES (?, ?)", [userId, postId]);
+        const [ rows ] = await pool.query("INSERT INTO likes (user_id, post_id, created_at) VALUES (?, ?, ?)", [userId, postId, created_at]);
         
         return rows.insertId
     } catch(err) {
@@ -32,9 +32,9 @@ export const createLikeData = async (data) => {
 
 export const updateLikeData = async (id, data) => {
     try {
-        const { userId, postId } = data;
+        const { userId, postId, created_at } = data;
 
-        const [ rows ] = await pool.query("UPDATE likes SET user_id = ?, post_id = ? WHERE id = ?", [userId, postId, id])
+        const [ rows ] = await pool.query("UPDATE likes SET user_id = ?, post_id = ?, created_at = ? WHERE id = ?", [userId, postId, id, created_at])
 
         return rows
     } catch(err) {

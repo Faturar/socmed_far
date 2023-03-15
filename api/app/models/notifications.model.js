@@ -20,9 +20,9 @@ export const getNotificationById = async (id) => {
 
 export const createNotificationData = async (data) => {
     try {
-        const { userId, description } = data;
+        const { userId, description, created_at, updated_at } = data;
 
-        const [ rows ] = await pool.query("INSERT INTO notifications (user_id, description) VALUES (?, ?)", [userId, description]);
+        const [ rows ] = await pool.query("INSERT INTO notifications (user_id, description, created_at, updated_at) VALUES (?, ?)", [userId, description, created_at, updated_at]);
         
         return rows.insertId
     } catch(err) {

@@ -5,10 +5,7 @@ export const getComments = async (req, res) => {
     try {
         const comments = await getAllComments();
 
-        return res.status(200).json({
-            message: "Success find all comment data!",
-            data: comments
-        })
+        return res.status(200).json(comments)
     } catch(err) {
         return res.status(500).send({message: "Cannot get all comments data.", err: err.message})
     }
@@ -20,10 +17,7 @@ export const getComment = async (req, res) => {
 
         const [ comment ] = await getCommentById(id);
 
-        return res.status(200).json({
-            message: "Success find comment data!",
-            data: comment
-        });
+        return res.status(200).json(comment);
     } catch(err) {
         return res.status(500).json({message: "Cannot get comment data.", err: err.message})
     }
