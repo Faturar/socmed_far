@@ -1,4 +1,5 @@
 "use client"
+import {useEffect, useState} from 'react'
 
 import Image from "next/image"
 
@@ -13,9 +14,28 @@ import profileImg from '../public/assets/image/profile1.png'
 import profileBg from '../public/assets/image/profile-bg.png'
 
 // Data
-import { posts, suggestions } from './data'
+import { suggestions } from './data'
+
+export const getPosts = async () => {
+  const res = await fetch(`http://localhost:3001/api/posts`);
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch data');
+  }
+
+  return res.json()
+}
 
 export default function Home() {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    getPosts()
+    .then(data => {
+      setPosts(data)
+    });
+  }, [])
+  
   const selectFile = () => {
     document.getElementById('imageUp').click();
   }
@@ -65,7 +85,7 @@ export default function Home() {
         </div>
 
         {posts.map((item, index) => (
-            <PostItem profile={item.profile} post={item.post} key={index} />
+            <PostItem post={item} key={index} />
           )
         )}
       </div>

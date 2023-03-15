@@ -9,8 +9,11 @@ import { DotsThree, ThumbsUp, ChatCircleDots, Share, PaperPlaneRight, Trash } fr
 import profileImg from '../public/assets/image/profile2.png'
 import postImg from '../public/assets/image/post-image.png'
 
-export default function PostItem({ profile, post }) {
+export default function PostItem({ post }) {
   const [dropdown, setDropdown] = useState(false);
+
+  const api_url = 'http://localhost:3001/static/';
+  console.log(post.image)
 
   return (
     <div className="mb-8">
@@ -19,11 +22,11 @@ export default function PostItem({ profile, post }) {
         <div className="flex justify-between items-center">
           <div className="flex"> 
             <div className="rounded-xl">
-              <Image className="w-12 h-12" src={profile.image} alt="" />
+              {post.user_profile_img != null ? <Image className="w-12 h-12 rounded-full" src={api_url + post.user_profile_img} width={512} height={512} alt="" /> : <Image className="w-12 h-12 rounded-full" src={profileImg} width={512} height={512} alt="" />}
             </div>
             <div className="ml-3">
-              <h4>{profile.username}</h4>
-              <span className="text-sm text-gray-400">{profile.role}</span>
+              <h4>{post.user_username}</h4>
+              <span className="text-sm text-gray-400">{post.user_role}</span>
             </div>
           </div>
           
@@ -43,8 +46,8 @@ export default function PostItem({ profile, post }) {
 
         {/* Content */}
         <div className="flex flex-col mt-4">
-          <Image src={post.image} className={`${post.image !== '' ? 'block' : 'hidden'} rounded-xl`} alt="" />
-          <p className={`${post.image !== '' ? 'mt-4' : ''}`}>{post.content}</p>
+          {post.image ? <Image src={api_url + post.image} width={1000} height={1000} className="rounded-xl" alt="" /> : ''}
+          <p className={post.image ? 'mt-4' : ''}>{post.content}</p>
         </div>
 
         {/* Footer */}
@@ -54,13 +57,13 @@ export default function PostItem({ profile, post }) {
               <button type="button">
                 <ThumbsUp size={24} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
               </button>
-              <span className="ml-2">{post.like}</span>
+              {/* <span className="ml-2">{post.like}</span> */}
             </div>
             <div className="flex">
               <button type="button">
                 <ChatCircleDots size={24} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
               </button>
-              <span className="ml-2">{post.comment.length}</span>
+              {/* <span className="ml-2">{post.comment.length}</span> */}
             </div>
             <div className="w-full flex justify-end">
               <button type="button">
@@ -71,7 +74,7 @@ export default function PostItem({ profile, post }) {
           <div className="mt-6 py-2 px-2 bg-gray-100 rounded-xl">
             <div className="flex justify-between items-center">
               <div className="w-1/12">
-                <Image className="w-8" src={profileImg} alt="Profile" />
+                {post.user_profile_img != null ? <Image className="w-8 rounded-full" src={api_url + post.user_profile_img} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full" src={profileImg} width={512} height={512} alt="Profile" />}
               </div>
               
               <input type="text" className="w-10/12 px-4 sm:px-2 md:px-0 bg-transparent outline-none" placeholder="Write a comment" />
