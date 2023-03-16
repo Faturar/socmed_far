@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "server": "nodemon server.js"
+    "server": "node-dev server.js"
   },
   "author": "faturar",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "jsonwebtoken": "^9.0.0",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.1.2",
-    "nodemon": "^2.0.21"
+    "node-dev": "^8.0.0",
+    "nodemon": "^2.0.15"
   }
 }
