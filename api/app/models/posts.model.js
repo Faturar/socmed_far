@@ -3,13 +3,10 @@ import pool from '../db/connect.js'
 export const getAllPosts = async () => {
     try {
         const [ rows ] = await pool.query(`
-        SELECT a.user_id, a.image, a.content, a.created_at, a.updated_at, b.username as user_username, b.name as user_name, b.role as user_role, b.profile_bg as user_profile_bg, b.profile_img as user_profile_img 
+        SELECT a.id, a.user_id, a.image, a.content, a.created_at, a.updated_at, b.username as user_username, b.name as user_name, b.role as user_role, b.profile_bg as user_profile_bg, b.profile_img as user_profile_img 
         FROM posts as a 
         LEFT JOIN users as b 
-        ON a.user_id = b.id`);
-
-        // Need to add datetime for sorting data
-
+        ON a.user_id = b.id ORDER BY a.created_at DESC`);
 
         return rows
     } catch(err){
