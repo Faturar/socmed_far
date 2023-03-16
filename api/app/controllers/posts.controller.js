@@ -46,8 +46,6 @@ export const create = async (req, res) => {
             content,
         }
 
-        // console.log(date)
-
         const postId = await createPostData(data)
 
         const [ post ] = await getPostById(postId);
