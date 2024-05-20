@@ -21,7 +21,17 @@ export const getUserById = async (id) => {
 export const getUserUsername = async (username) => {
     try {
         const [ rows ] = await pool.query("SELECT * FROM users WHERE username = ?", [username])
-        
+
+        return rows[0]
+    } catch(err) {
+        return err.message
+    }
+}
+
+export const getUserEmail = async (email) => {
+    try {
+        const [ rows ] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
+
         return rows[0]
     } catch(err) {
         return err.message
@@ -47,7 +57,7 @@ export const updateUserData = async (id, data) => {
         const [ rows ] = await pool.query("UPDATE users SET profile_bg = ?, profile_img = ?, username = ?, name = ?, role = ?, email = ?, password = ?, address = ?, created_at = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", [profileBg, profileImg, username, name, role, email, password, address, created_at, id])
 
         return rows
-    } catch(err) {post
+    } catch(err) {
         return err.message
     }
 }

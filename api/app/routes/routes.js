@@ -5,22 +5,17 @@ import commentsRoutes from './comments.routes.js'
 import notificationRoutes from './notifications.routes.js'
 import authRoutes from './auth.routes.js'
 
-export default app => {
-    // posts route
-    postsRoutes(app)
+export default (app) => {
+    const routes = [
+        postsRoutes,
+        usersRoutes,
+        likesRoutes,
+        commentsRoutes,
+        notificationRoutes,
+        authRoutes
+    ];
 
-    // users route
-    usersRoutes(app)
-
-    // likes route
-    likesRoutes(app)
-
-    // comments route
-    commentsRoutes(app)
-
-    // Notif route
-    notificationRoutes(app)
-
-    // Notif route
-    authRoutes(app)
+    for (const route of routes) {
+        route(app);
+    }
 }

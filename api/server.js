@@ -4,13 +4,14 @@ import { fileURLToPath } from 'url';
 import path from 'path'
 import {dirname} from 'path'
 
+
 // route
 import route from './app/routes/routes.js'
 
 const app = express()
 const port = 3001
 
-// const whitelist = ['http://localhost:3000']
+// const whitelist = ['http://localhost:3000', 'http://localhost:3001']
 // const corsOptions = {
 //   origin: function (origin, callback) {
 //     if (whitelist.indexOf(origin) !== -1) {

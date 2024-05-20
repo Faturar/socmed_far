@@ -47,7 +47,6 @@ export const create = async (req, res) => {
         }
 
         const postId = await createPostData(data)
-
         const [ post ] = await getPostById(postId);
 
         return res.status(201).json({
@@ -77,15 +76,15 @@ export const update = async (req, res) => {
         const image = req.file ? req.file.filename : oldPost.image
 
         // Delete image on storge
-        if(image !== null && fs.existsSync(path.join(__dirname, '../public/') + oldPost.image)) {
-            fs.unlinkSync(path.join(__dirname, '../public/') + oldPost.image)
+        if(req.file != null && fs.existsSync(path.join(__dirname, '../../public/') + oldPost.image)) {
+            fs.unlinkSync(path.join(__dirname, '../../public/') + oldPost.image)
         }
 
         // init data to update
         const data = { 
-            userId, 
+            userId: userId ? userId : oldPost.user_id, 
             image,
-            content,
+            content: content ? content : oldPost.content,
             created_at: oldPost.created_at,
         }
 
@@ -104,7 +103,7 @@ export const update = async (req, res) => {
         // no post data
         } else {
             return res.status(404).json({
-                message: "No post data to delete!",
+                message: "No post data to update!",
             });
         }
     } catch(err) {
