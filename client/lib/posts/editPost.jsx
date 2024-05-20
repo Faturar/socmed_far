@@ -9,6 +9,7 @@ export default async function editPost(id, data) {
         method: "PUT", 
         mode: "cors",
         headers: {
+          'authorization': 'bearer ' + data.token,
           'Accept': 'application/json',
         },
         body: fd,
