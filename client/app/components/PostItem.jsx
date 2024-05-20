@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useContext } from 'react'
 
 import Image from "next/image"
 import { useRouter } from 'next/navigation'
 
 // Lib
-import deletePost from '../lib/posts/deletePost'
+import deletePost from '../../lib/posts/deletePost'
 
 // Icon
 import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pencil, ImageSquare, X } from 'phosphor-react'
@@ -14,9 +14,12 @@ import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pen
 // Image
 import profileImg from '@/public/assets/image/profile1.png'
 import editPost from '@/lib/posts/editPost'
+import { TokenContext } from '../TokenContext'
 
 export default function PostItem({ post }) {
   const router = useRouter();
+
+  const {token, setToken} = useContext(TokenContext)
 
   const [dropdown, setDropdown] = useState(false);
   const [editImage, setEditImage] = useState(false);
@@ -49,15 +52,18 @@ export default function PostItem({ post }) {
     router.refresh();
   }
 
-  const onClickEdit = async () => {
+  const onClickEdit = async (content) => {
+    setContent(content)
     setEdit(true)
   }
 
-  const editHandle = async (id) => {
+  const editHandle = async (id, userId) => {
+
     const data = {
-      userId: 1,
+      userId,
       image,
-      content
+      content,
+      token,
     }
     
     try {
@@ -95,7 +101,7 @@ export default function PostItem({ post }) {
             </button>
             
             <div className={`z-50 px-6 py-6 flex flex-col absolute top-0 right-0 transition-all duration-300 ${dropdown ? 'opacity-1' : 'opacity-0'}`} onMouseEnter={() => setDropdown(true)} onMouseLeave={() => setDropdown(false)}>
-              <button onClick={() => onClickEdit()} className="flex items-center text-sm px-4 py-2 bg-white hover:bg-gray-500 hover:text-white rounded-t-lg">
+              <button onClick={() => onClickEdit(post.content)} className="flex items-center text-sm px-4 py-2 bg-white hover:bg-gray-500 hover:text-white rounded-t-lg">
                 <Pencil size={16} className="mr-2" />
                 Edit
               </button> 
@@ -124,7 +130,7 @@ export default function PostItem({ post }) {
           {/* edit */}
           <input ref={selectFileEl} type="file" className="hidden" onChange={imageFile} />
 
-          <textarea onChange={(e) => setContent(e.target.value)} className={`h-16 lg:h-20 py-2 px-3 rounded-t-lg w-full border outline-none ${post.image ? 'mt-4' : ''}${!edit ? ' hidden' : ''}`} placeholder="Write something ...">{content}</textarea>
+          <textarea defaultValue={content} onChange={(e) => setContent(e.target.value)} className={`h-16 lg:h-20 py-2 px-3 rounded-t-lg w-full border outline-none ${post.image ? 'mt-4' : ''}${!edit ? ' hidden' : ''}`} placeholder="Write something ..."></textarea>
 
           <div className={`flex justify-between rounded-b-lg bg-gray-50 ${!edit ? ' hidden' : ''}`}>
             <button className="flex items-center ml-4 py-2 text-sm hover:text-red-500 transition-all duration-300" onClick={() => setEdit(false)}>
@@ -132,7 +138,7 @@ export default function PostItem({ post }) {
               Cancel
             </button>
 
-            <button onClick={() => editHandle(post.id)} className="bg-gray-100 px-6 py-3 rounded-br-lg" >
+            <button onClick={() => editHandle(post.id, post.user_id)} className="bg-gray-100 px-6 py-3 rounded-br-lg" >
               <PaperPlaneRight size={16} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
             </button>
           </div>

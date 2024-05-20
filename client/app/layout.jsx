@@ -1,6 +1,6 @@
 import './globals.css'
 import { Roboto } from 'next/font/google'
-import Navbar from './Navbar'
+import { TokenProvider } from './TokenContext'
 
 const roboto = Roboto({
                   weight: ['400', '500', '700'], 
@@ -18,8 +18,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${roboto.className} bg-gray-50`}>
-        <Navbar />
+      <TokenProvider>
         {children}
+      </TokenProvider>
       </body>
     </html>
   )
