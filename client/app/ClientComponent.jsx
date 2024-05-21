@@ -69,6 +69,9 @@ export default function ClientComponent({children}) {
         {/* Main side */}
         <div className="lg:w-2/4 px-6">
           <div className="bg-white mx-4 sm:mx-0 mb-6 pt-6 pb-0 drop-shadow-sm rounded-2xl overflow-hidden text-gray-600">
+            <div className={token && token == null ? 'mb-8 px-6' : ''}>
+              <h2 className='mb-0 text-lg text-red-500'>{token && token == null ? 'Login to create post' : ''}</h2>
+            </div>
             
             {/* Add Post */}
             <div className="flex px-6">
@@ -76,7 +79,7 @@ export default function ClientComponent({children}) {
                 <Image className="w-10 h-10" src={profileImg} alt="" />
               </div>
               <div className="w-full">
-                <textarea value={content} onChange={(e) => setContent(e.target.value)} className="h-16 lg:h-20 ml-4 py-2 px-3 w-full outline-none" placeholder="Write something ..."></textarea>
+                <textarea value={content} onChange={(e) => setContent(e.target.value)} disabled={token == null} className="h-16 lg:h-20 ml-4 py-2 px-3 w-full outline-none disabled:bg-gray-100" placeholder="Write something ..."></textarea>
               </div>
             </div>
 
@@ -87,15 +90,15 @@ export default function ClientComponent({children}) {
             
             {/* Form */}
             <div className="flex justify-between bg-blue-50">
-              <input ref={selectFileEl} type="file" className="hidden" onChange={imageFile} />
-              
-              <button className="flex items-center ml-6 py-4 hover:text-blue-500 transition-all duration-300" onClick={selectFile}>
-                <ImageSquare size={24} className="mr-2 hover:mr-3 hover:text-blue-500 hover:scale-125 transition-all duration-300" />
+              <input ref={selectFileEl} type="file" className="hidden" onChange={imageFile} disabled={token == null} />
+               
+              <button className={`flex items-center ml-6 py-4 ${token == null ? 'text-gray-500 translate-none' : 'hover:text-blue-500 transition-all duration-300'}`} disabled={token == null} onClick={selectFile}>
+                <ImageSquare size={24} className={`mr-2 ${token == null ? '' : 'hover:mr-3 hover:text-blue-500 hover:scale-125 transition-all duration-300'}`} />
                 Image
               </button>
 
-              <button className="bg-blue-100 px-6 py-3" onClick={() => create(post.user_id)}>
-                <PaperPlaneRight size={24} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
+              <button className="bg-blue-100 px-6 py-3 disabled:bg-gray" onClick={() => create(post.user_id)} disabled={token == null}>
+                <PaperPlaneRight size={24} className={token == null ? 'transition-none text-gray-500' : 'hover:text-blue-500 hover:scale-125 transition-all duration-300'} />
               </button>
             </div>
           </div>
