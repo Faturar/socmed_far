@@ -62,8 +62,8 @@ export const create = async (req, res) => {
         const hashPassword = await bcrypt.hash(password, salt);
 
         const data = {
-            profileBg: req.files.profile_bg ? req.files.profile_bg[0].filename : null,
-            profileImg: req.files.profile_img ? req.files.profile_img[0].filename : null,
+            profileBg: req.files.profile_bg ? req.files.profile_bg[0].filename : 'default_bg.png',
+            profileImg: req.files.profile_img ? req.files.profile_img[0].filename : 'default.png',
             username, name, role, email, password: hashPassword, address
         };
 
