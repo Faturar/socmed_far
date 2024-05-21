@@ -15,7 +15,7 @@ import logo from '../public/assets/image/logo.png'
 
 export default function Navbar() {
     const {token, setToken} = useContext(TokenContext)
-    
+
     return (
         <nav className=' bg-white text-gray-600 drop-shadow-sm'>
             <div className="container flex justify-start md:justify-between mx-auto p-6 md:px-8 lg:px-0">
