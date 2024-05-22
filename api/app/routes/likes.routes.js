@@ -1,12 +1,12 @@
 import express from 'express'
-import { getLikes, getLike, create, update, deleteLike } from '../controllers/likes.controller.js';
+import { getLikes, getLikeByPost, create, update, deleteLike } from '../controllers/likes.controller.js';
 
 export default app => {
     let router = express.Router();
 
     router.get("/", getLikes);
 
-    router.get("/:id", getLike);
+    router.get("/post/:id", getLikeByPost);
 
     router.post("/", create);
 

@@ -1,4 +1,4 @@
-import { getAllLikes, getLikeById, createLikeData, updateLikeData, deleteLikeData } from '../models/likes.model.js'
+import { getAllLikes, getLikeById, getLikeByPostId, createLikeData, updateLikeData, deleteLikeData } from '../models/likes.model.js'
 
 // Get likes
 export const getLikes = async (req, res) => {
@@ -11,11 +11,13 @@ export const getLikes = async (req, res) => {
     }
 }
 
-export const getLike = async (req, res) => {
+
+
+export const getLikeByPost = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const [ like ] = await getLikeById(id);
+        const [ like ] = await getLikeByPostId(id);
 
         return res.status(200).json(like);
     } catch(err) {
