@@ -6,20 +6,36 @@ export const TokenContext = createContext();
 
 // Create a provider component
 export const TokenProvider = ({ children }) => {
-  const [token, setToken] = useState(() => {
-    const storedToken =
-      typeof window !== "undefined" && window.localStorage.getItem("token");
+  const getInitialToken = () => {
+    const storedToken = window.localStorage.getItem("token");
     return storedToken || null;
-  });
+  };
+
+  const getInitialUserData = () => {
+    const storedUserData = JSON.parse(window.localStorage.getItem("user"));
+    return storedUserData || null;
+  };
+
+  const [token, setToken] = useState(getInitialToken);
+  const [login, setLogin] = useState(false);
+  const [userData, setUserData] = useState(getInitialUserData);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem("token", token || "");
+      if (userData) {
+        window.localStorage.setItem("user", JSON.stringify(userData));
+      }
     }
-  }, [token]);
+    if (token) {
+      setLogin(true)
+    } else {
+      setLogin(false)
+    }
+  }, [token, userData]);
 
   return (
-    <TokenContext.Provider value={{ token, setToken }}>
+    <TokenContext.Provider value={{ token, setToken, userData, setUserData, login, setLogin }}>
       {children}
     </TokenContext.Provider>
   );
