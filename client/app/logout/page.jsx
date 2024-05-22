@@ -1,15 +1,25 @@
 "use client"
 
-import { redirect } from "next/navigation";
-import { useContext } from "react";
+import { useRouter } from "next/navigation";
+import { useContext, useEffect } from "react";
 import { TokenContext } from "../TokenContext";
 
 // next
 export default function Page() {
-    const {token, setToken} = useContext(TokenContext)
+    const { setToken, setUserData } = useContext(TokenContext);
+    const router = useRouter()
 
-    window.localStorage.removeItem('token');
-    setToken(null)
-
-    return redirect('/')
-}
+    useEffect(() => {
+      const clearTokenAndUserData = () => {
+        window.localStorage.removeItem('token');
+        window.localStorage.removeItem('user');
+        setToken(null);
+        setUserData(null);
+      };
+  
+      clearTokenAndUserData();
+      router.push('/')
+    }, [setToken, setUserData]);
+  
+    return null
+  }
