@@ -7,6 +7,7 @@ export const register = async (req, res) => {
 
     try {
         const usernameExists = await getUserUsername(username);
+
         const emailExists = await getUserEmail(email);
 
         if (usernameExists || emailExists) {
@@ -42,7 +43,7 @@ export const register = async (req, res) => {
         return res.status(201).json({
             status: true,
             message: "Success creating user data!",
-            user: userData,
+            user,
             token
         });
     } catch(err) {
