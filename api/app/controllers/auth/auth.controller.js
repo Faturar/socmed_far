@@ -87,3 +87,26 @@ export const login = async (req, res) => {
         return res.status(500).json({ message: "Error logging in", err: err.message });
     }
 }
+
+export const forgotPasswod = async (req, res) => {
+    try {
+        const { email } = req.body;
+    
+        // Check if the user exists
+        const user = await getUserEmail(email);
+        if (!user) {
+          return res.status(404).json({ error: 'User not found' });
+        }
+    
+        // Generate a reset token
+        const resetToken = user.generateResetToken();
+    
+        // Send the reset email
+        await sendPasswordResetEmail(email, resetToken);
+    
+        res.status(200).json({ message: 'Reset email sent' });
+    } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+    }
+}
