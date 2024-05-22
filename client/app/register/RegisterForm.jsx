@@ -8,22 +8,23 @@ import { TokenContext } from '../TokenContext';
 import { redirect } from 'next/navigation';
 
 function RegisterForm() {
-    const {token, setToken} = useContext(TokenContext)
+    const {token, setToken, setUserData} = useContext(TokenContext)
 
-    const [name, setName] = useState('');
     const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const onClickRegister = async () => {
         const data = {
-          name, username, email, password
+          username, name, email, password
         }
     
         try {
           const res = await registerRequest(data);
 
           setToken(res.token);
+          setUserData(res.user);
     
           redirect('/')
         } catch(err) {

@@ -8,8 +8,8 @@ export default async function registerRequest(data) {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          name: data.name,
           username: data.username,
+          name: data.name,
           email: data.email,
           password: data.password
         })

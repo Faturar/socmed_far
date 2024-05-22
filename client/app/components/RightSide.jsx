@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 import Image from "next/image"
 
 import { suggestions } from '../data'
+import { TokenContext } from '../TokenContext'
 
 function RightSide() {
+  const {token, userData} = useContext(TokenContext)
   return (
     <div className="hidden lg:flex lg:w-1/4 pl-2">
-        <div className="w-full relative">
+        <div className={`w-full relative ${!token ? 'hidden' : ''}`}>
           <div className="sticky top-12 flex flex-col bg-white px-6 py-6 mb-6 drop-shadow-sm rounded-2xl overflow-hidden text-gray-600">
               <h2 className="text-xl">Suggestion for you:</h2>
 
