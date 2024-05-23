@@ -27,11 +27,23 @@ export const getLikeByPostId = async (id) => {
     }
 }
 
+export const getCheckLiked = async (userId, postId) => {
+    try {
+        const [rows] = await pool.query("SELECT * FROM likes WHERE post_id = ? AND user_id = ?", [postId, userId]);
+
+        return rows
+    } catch(err) {
+        return err.message
+    }
+}
+
 export const createLikeData = async (data) => {
     try {
         const { userId, postId } = data;
 
         const [ rows ] = await pool.query("INSERT INTO likes (user_id, post_id, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)", [userId, postId]);
+
+        
     
         return rows.insertId
     } catch(err) {

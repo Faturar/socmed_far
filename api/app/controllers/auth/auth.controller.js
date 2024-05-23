@@ -69,6 +69,7 @@ export const login = async (req, res) => {
         }, process.env.JWT_SECRET, { expiresIn: "12h" });
 
         const userData = {
+            id: user.id,
             profileBg: user.profile_bg,
             profileImg: user.profile_img,
             username: user.username,
@@ -106,7 +107,6 @@ export const forgotPasswod = async (req, res) => {
     
         res.status(200).json({ message: 'Reset email sent' });
     } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
     }
 }

@@ -67,7 +67,7 @@ export const update = async (req, res) => {
         const id = req.params.id
 
         // get body data
-        const { userId, content } = req.body;
+        const { userId, content, likes, comments, shares } = req.body;
 
         // get old data to delete image
         const [ oldPost ] = await getPostById(id)
@@ -79,17 +79,26 @@ export const update = async (req, res) => {
         if(req.file != null && fs.existsSync(path.join(__dirname, '../../public/') + oldPost.image)) {
             fs.unlinkSync(path.join(__dirname, '../../public/') + oldPost.image)
         }
+        
+        const oldLikes = oldPost.likes != null ? oldPost.likes : 0;
+        const oldComments = oldPost.comments != null ? oldPost.comments : 0;
+        const oldShares = oldPost.shares != null ? oldPost.shares : 0;
 
         // init data to update
         const data = { 
-            userId: userId ? userId : oldPost.user_id, 
+            userId: userId, 
             image,
-            content: content ? content : oldPost.content,
+            content: content && content != 'null' ? content : oldPost.content,
+            likes: likes && likes != 'null' ? likes : oldLikes,
+            comments: comments && comments != 'null' ? comments : oldComments,
+            shares: shares &&shares != 'null' ? shares : oldShares,
             created_at: oldPost.created_at,
         }
 
         // update post data
         const update = await updatePostData(id, data)
+
+        console.log(update)
 
         // get updated post data
         const [ post ] = await getPostById(id)
@@ -121,6 +130,10 @@ export const deletePost = async (req, res) => {
         const [ post ] = await getPostById(id)
 
         const deleteData = await deletePostData(id)
+
+        if(fs.existsSync(path.join(__dirname, '../../public/') + post.image)) {
+            fs.unlinkSync(path.join(__dirname, '../../public/') + post.image)
+        }
 
         if(deleteData.affectedRows != 0) {
             return res.status(200).json({
