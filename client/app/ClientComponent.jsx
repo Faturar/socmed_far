@@ -25,7 +25,7 @@ import { TokenContext } from './TokenContext'
 export default function ClientComponent({children}) { 
   const {token, login, userData} = useContext(TokenContext)
   const [image, setImage] = useState(null)
-  const [content, setContent] = useState('')
+  const [content, setContent] = useState(null)
 
   const router = useRouter();
   const selectFileEl = useRef();
@@ -40,20 +40,20 @@ export default function ClientComponent({children}) {
     setImage(selectFileEl.current.files[0])
   }
 
-  const create = async (userId) => {
+  const create = async () => {
     const data = {
-      userId,
+      userId: userData.id,
       image,
       content,
       token,
     }
 
     try {
-      const res = await createPost(data);
+      const res = await createPost(data, token);
 
-      alert(res.message)
+      return
     } catch(err) {
-      alert(err.message)
+      console.log(err.message)
     }
 
     setImage(null)
@@ -74,7 +74,7 @@ export default function ClientComponent({children}) {
             {/* Add Post */}
             <div className="px-6 flex">
               <div className="rounded-xl">
-              {userData && userData.profile_img ? <Image className="w-10 h-10" src={api_url + userData.profile_img} width={512} height={512} alt="" /> : <Image className="w-10 h-10" src={profileImg} width={512} height={512} alt="" />}
+              {userData ? <Image className="w-10 h-10 object-cover" src={api_url + userData.profileImg} width={512} height={512} alt="" /> : <Image className="w-10 h-10 object-cover" src={profileImg} width={512} height={512} alt="" />}
               </div>
               <div className="w-full">
                 <textarea value={content} onChange={(e) => setContent(e.target.value)} disabled={!login} className="h-16 lg:h-20 ml-4 py-2 px-3 w-full outline-none disabled:bg-gray-100" placeholder="Write something ..."></textarea>
@@ -103,7 +103,7 @@ export default function ClientComponent({children}) {
 
               <button
                 className={`bg-blue-100 px-6 py-3 ${!login ? 'disabled:bg-gray' : ''}`}
-                onClick={() => create(post.user_id)}
+                onClick={create}
                 disabled={!login}
               >
                 <PaperPlaneRight size={24} className={`${!login ? 'transition-none text-gray-500' : 'hover:text-blue-500 hover:scale-125 transition-all duration-300'}`} />

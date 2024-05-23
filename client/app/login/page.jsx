@@ -1,7 +1,12 @@
 // next
 import LoginForm from "./LoginForm"
-import { TokenProvider } from '../TokenContext';
+import Loading from "../components/Loading";
 
 export default function Page() {
-  return <LoginForm />
+  return (
+    <>
+      <Loading />
+      <LoginForm />
+    </>
+  )
 }

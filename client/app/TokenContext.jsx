@@ -19,6 +19,8 @@ export const TokenProvider = ({ children }) => {
   const [token, setToken] = useState(getInitialToken);
   const [login, setLogin] = useState(false);
   const [userData, setUserData] = useState(getInitialUserData);
+  const [loading, setLoading] = useState(false);
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -35,7 +37,7 @@ export const TokenProvider = ({ children }) => {
   }, [token, userData]);
 
   return (
-    <TokenContext.Provider value={{ token, setToken, userData, setUserData, login, setLogin }}>
+    <TokenContext.Provider value={{ token, setToken, userData, setUserData, login, setLogin, posts, setPosts, loading, setLoading }}>
       {children}
     </TokenContext.Provider>
   );

@@ -9,17 +9,20 @@ import { useRouter } from 'next/navigation'
 import deletePost from '../../lib/posts/deletePost'
 
 // Icon
-import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pencil, ImageSquare, X } from 'phosphor-react'
+import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pencil, X } from 'phosphor-react'
 
 // Image
 import profileImg from '@/public/assets/image/profile1.png'
 import editPost from '@/lib/posts/editPost'
 import { TokenContext } from '../TokenContext'
+import createLike from '@/lib/likes/createLike'
+import getAllPosts from '@/lib/posts/getAllPosts'
+import deleteLike from '@/lib/likes/deleteLike'
 
 export default function PostItem({ post }) {
   const router = useRouter();
 
-  const {token, setToken} = useContext(TokenContext)
+  const {token, userData, setPosts, setLoading} = useContext(TokenContext)
 
   const [dropdown, setDropdown] = useState(false);
   const [editImage, setEditImage] = useState(false);
@@ -42,14 +45,14 @@ export default function PostItem({ post }) {
 
   const onClickDelete = async (id) => {
     try {
-      const res = await deletePost(id)
-
-      alert(res.message)
-    } catch(err) {
-      alert(err.message)
+      setLoading(true)
+      await deletePost(id, token)
+      const posts = await getAllPosts()
+      setPosts(posts)
+      setLoading(false)
+    } catch (err) {
+      console.log(err.message)
     }
-
-    router.refresh();
   }
 
   const onClickEdit = async (content) => {
@@ -57,26 +60,55 @@ export default function PostItem({ post }) {
     setEdit(true)
   }
 
-  const editHandle = async (id, userId) => {
-
+  const editHandle = async (id, userId, likes, comments, shares) => {
     const data = {
       userId,
       image,
       content,
-      token,
+      likes,
+      comments,
+      shares,
     }
-    
+
     try {
-      const res = await editPost(id, data);
+      setLoading(true)
+    
+      await editPost(id, data, token);
+      setEdit(false);
 
-      alert(res.message)
-      setEdit(false)
+      setImage(null)
+      setContent('')
+      
+      const posts = await getAllPosts()
+      setPosts(posts)
     } catch(err) {
-      alert(err.message)
+      console.log(err)
+    } finally {
+      setLoading(false)
+    }
+}
+
+  const onClickLike = async (postId, likes) => {
+    const data = {
+      userId: userData.id,
+      postId,
+      likes,
     }
 
-    setImage(null)
-    setContent('')
+    try {
+      const res = await createLike(data, token)
+
+      if(res.status == false) {
+        await deleteLike(res.like.id, token);
+      }
+
+      const posts = await getAllPosts();
+
+      return setPosts(posts)
+    } catch(err) {
+      console.log(err.message)
+    }
+
     router.refresh();
   }
 
@@ -87,7 +119,7 @@ export default function PostItem({ post }) {
         <div className="flex justify-between items-center">
           <div className="flex"> 
             <div className="rounded-xl">
-              {post.user_profile_img != null ? <Image className="w-12 h-12 rounded-full" src={api_url + post.user_profile_img} width={512} height={512} alt="" /> : <Image className="w-12 h-12 rounded-full" src={profileImg} width={512} height={512} alt="" />}
+              {post.user_profile_img ? <Image className="w-12 h-12 rounded-full object-cover" src={api_url + post.user_profile_img} width={512} height={512} alt="" /> : <Image className="w-12 h-12 rounded-full object-cover" src={profileImg} width={512} height={512} alt="" />}
             </div>
             <div className="ml-3">
               <h4>{post.user_username}</h4>
@@ -95,7 +127,7 @@ export default function PostItem({ post }) {
             </div>
           </div>
           
-          <div className="relative text-gray-600">
+          <div className={`relative text-gray-600 ${userData.id != post.user_id ? 'hidden' : ''}`}>
             <button className="" onMouseEnter={() => setDropdown(true)} onMouseLeave={() => setDropdown(false)}>
               <DotsThree size={24} />
             </button>
@@ -138,7 +170,7 @@ export default function PostItem({ post }) {
               Cancel
             </button>
 
-            <button onClick={() => editHandle(post.id, post.user_id)} className="bg-gray-100 px-6 py-3 rounded-br-lg" >
+            <button onClick={() => editHandle(post.id, post.user_id, post.likes, post.comments, post.shares)} className="bg-gray-100 px-6 py-3 rounded-br-lg" >
               <PaperPlaneRight size={16} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
             </button>
           </div>
@@ -148,10 +180,10 @@ export default function PostItem({ post }) {
         <div className="flex flex-col mt-6">
           <div className="flex space-x-5 text-gray-600">
             <div className="flex">
-              <button type="button">
+              <button type="button" onClick={() => onClickLike(post.id, post.likes)}>
                 <ThumbsUp size={24} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
               </button>
-              {/* <span className="ml-2">{post.like}</span> */}
+              <span className="ml-2">{post.likes}</span>
             </div>
             <div className="flex">
               <button type="button">
@@ -168,7 +200,7 @@ export default function PostItem({ post }) {
           <div className="mt-6 py-2 px-2 bg-gray-100 rounded-xl">
             <div className="flex justify-between items-center">
               <div className="w-1/12">
-                {post.user_profile_img != null ? <Image className="w-8 rounded-full" src={api_url + post.user_profile_img} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full" src={profileImg} width={512} height={512} alt="Profile" />}
+                {userData && userData.profileImg ? <Image className="w-8 rounded-full object-cover" src={api_url + userData.profileImg} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full object-cover" src={profileImg} width={512} height={512} alt="Profile" />}
               </div>
               
               <input type="text" className="w-10/12 px-4 sm:px-2 md:px-0 bg-transparent outline-none" placeholder="Write a comment" />

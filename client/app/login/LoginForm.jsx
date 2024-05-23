@@ -9,7 +9,7 @@ import loginRequest from "@/lib/auth/login"
 import { redirect } from "next/navigation"
 
 export default function LoginForm() {
-  const {token, setToken, setUserData} = useContext(TokenContext)
+  const {token, setToken, setUserData, setLoading} = useContext(TokenContext)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -24,6 +24,8 @@ export default function LoginForm() {
 
       setToken(res.token);
       setUserData(res.user);
+
+      setLoading(true)
 
       redirect('/')
     } catch(err) {

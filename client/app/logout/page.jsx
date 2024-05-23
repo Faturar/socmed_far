@@ -3,13 +3,15 @@
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 import { TokenContext } from "../TokenContext";
+import Loading from "../components/Loading";
 
 // next
 export default function Page() {
-    const { setToken, setUserData } = useContext(TokenContext);
+    const { setToken, setUserData, setLoading } = useContext(TokenContext);
     const router = useRouter()
 
     useEffect(() => {
+      setLoading(true)
       const clearTokenAndUserData = () => {
         window.localStorage.removeItem('token');
         window.localStorage.removeItem('user');
@@ -21,5 +23,5 @@ export default function Page() {
       router.push('/')
     }, [setToken, setUserData]);
   
-    return null
+    return <Loading />
   }

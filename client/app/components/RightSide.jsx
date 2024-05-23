@@ -6,7 +6,7 @@ import { suggestions } from '../data'
 import { TokenContext } from '../TokenContext'
 
 function RightSide() {
-  const {token, userData} = useContext(TokenContext)
+  const {token} = useContext(TokenContext)
   return (
     <div className="hidden lg:flex lg:w-1/4 pl-2">
         <div className={`w-full relative ${!token ? 'hidden' : ''}`}>
