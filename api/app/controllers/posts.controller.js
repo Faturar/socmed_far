@@ -12,7 +12,10 @@ export const getPosts = async (req, res) => {
     try {
         const posts = await getAllPosts();
 
-        return res.status(200).json(posts)
+        return res.status(200).json({
+            message: "Success get all posts data!",
+            data: posts
+        })
     } catch(err) {
         return res.status(500).send({
             message: "Cannot get all posts data.", 
@@ -27,7 +30,10 @@ export const getPost = async (req, res) => {
 
         const [ post ] = await getPostById(id);
 
-        return res.status(200).json(post);
+        return res.status(200).json({
+            message: "Success get post data!",
+            data: post
+        })
     } catch(err) {
         return res.status(500).json({
             message: "Cannot get post data.", err: err.message

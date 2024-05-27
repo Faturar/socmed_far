@@ -60,7 +60,7 @@ export default function ClientComponent() {
         const res = await createPost(data, token);
 
         const posts = await getAllPosts()
-        setPosts(posts)
+        setPosts(posts.data)
 
         setContent('')
         setImage(null)
@@ -81,13 +81,13 @@ export default function ClientComponent() {
   const getData = async () => {
     const res = await getAllPosts();
 
-    return setPosts(res)
+    return setPosts(res.data)
   }
 
   const getUserLikes = async () => {
     const res = await getAllUserLikes(userData ? userData.id : null, token);
 
-    return setUserLikes(res)
+    return setUserLikes(res.data)
   }
 
   useEffect(() => {

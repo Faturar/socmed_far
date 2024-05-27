@@ -5,7 +5,10 @@ export const getLikes = async (req, res) => {
     try {
         const likes = await getAllLikes();
 
-        return res.status(200).json(likes)
+        return res.status(200).json({
+            message: "Success get all likes data!",
+            data: likes
+        })
     } catch(err) {
         return res.status(500).send({message: "Cannot get all likes data.", err: err.message})
     }
@@ -17,7 +20,10 @@ export const getLikeByPost = async (req, res) => {
 
         const like = await getLikeByPostId(id);
 
-        return res.status(200).json(like);
+        return res.status(200).json({
+            message: "Success get post likes data!",
+            data: like
+        })
     } catch(err) {
         return res.status(500).json({message: "Cannot get like data.", err: err.message})
     }
@@ -29,9 +35,10 @@ export const getUserLike = async (req, res) => {
 
         const like = await getLikeUser(id);
 
-        console.log(like)
-
-        return res.status(200).json(like);
+        return res.status(200).json({
+            message: "Success get user likes data!",
+            data: like
+        })
     } catch(err) {
         return res.status(500).json({message: "Cannot get like data.", err: err.message})
     }

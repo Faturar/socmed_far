@@ -14,7 +14,10 @@ export const getUsers = async (req, res) => {
     try {
         const users = await getAllUsers();
 
-        return res.status(200).json(users)
+        return res.status(200).json({
+            message: "Success get all users data!",
+            data: users
+        })
     } catch(err) {
         return res.status(500).send({message: "Cannot get all users data.", err: err.message})
     }
@@ -26,7 +29,10 @@ export const getUser = async (req, res) => {
 
         const [ user ] = await getUserById(id);
 
-        return res.status(200).json(user);
+        return res.status(200).json({
+            message: "Success get user data!",
+            data: user
+        })
     } catch(err) {
         return res.status(500).json({message: "Cannot get user data.", err: err.message})
     }
@@ -38,7 +44,10 @@ export const getUserByUsername = async (req, res) => {
 
         const [ user ] = await getUserUsername(username);
 
-        return res.status(200).json(user);
+        return res.status(200).json({
+            message: "Success get all user data!",
+            data: user
+        })
     } catch(err) {
         return res.status(500).json({message: "Cannot get user data.", err: err.message})
     }
@@ -123,13 +132,15 @@ export const update = async (req, res) => {
 
         if (update.changedRows !== 0) {
             const [updatedUser] = await getUserById(id);
-            return res.status(200).json({ message: "Success updating user data!", data: updatedUser });
+            return res.status(200).json({ 
+                message: "Success updating user data!", 
+                data: updatedUser 
+            });
         }
     } catch (err) {
         return res.status(500).json({ message: "Cannot update user data.", err: err.message });
     }
 }
-
 
 export const deleteUser = async (req, res) => {
     try {

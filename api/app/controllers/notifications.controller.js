@@ -5,7 +5,10 @@ export const getNotifications = async (req, res) => {
     try {
         const notifications = await getAllNotifications();
 
-        return res.status(200).json(notifications)
+        return res.status(200).json({
+            message: "Success get all notifications data!",
+            data: notifications
+        })
     } catch(err) {
         return res.status(500).send({message: "Cannot get all notifications data.", err: err.message})
     }
@@ -17,7 +20,10 @@ export const getNotification = async (req, res) => {
 
         const [ notification ] = await getNotificationById(id);
 
-        return res.status(200).json(notification);
+        return res.status(200).json({
+            message: "Success get notification data!",
+            data: notification
+        })
     } catch(err) {
         return res.status(500).json({message: "Cannot get notification data.", err: err.message})
     }

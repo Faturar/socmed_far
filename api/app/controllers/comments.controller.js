@@ -1,11 +1,14 @@
-import { getAllComments, getCommentById, createCommentData, updateCommentData, deleteCommentData } from '../models/comments.model.js'
+import { getAllComments, getCommentById, createCommentData, updateCommentData, deleteCommentData, getPostComments } from '../models/comments.model.js'
 
 // Get comments
 export const getComments = async (req, res) => {
     try {
         const comments = await getAllComments();
 
-        return res.status(200).json(comments)
+        return res.status(200).json({
+            message: "Success get all comments data!",
+            data: comments
+        })
     } catch(err) {
         return res.status(500).send({message: "Cannot get all comments data.", err: err.message})
     }
@@ -15,9 +18,28 @@ export const getComment = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const [ comment ] = await getCommentById(id);
+        const [ comments ] = await getCommentById(id);
 
-        return res.status(200).json(comment);
+        return res.status(200).json({
+            message: "Success get comment data!",
+            data: comment
+        })
+    } catch(err) {
+        return res.status(500).json({message: "Cannot get comment data.", err: err.message})
+    }
+}
+
+export const getCommentPost = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const {limit, offset} = req.query;
+
+        const comments = await getPostComments(id, parseInt(limit), parseInt(offset));
+
+        return res.status(200).json({
+            message: "Success get comment data!",
+            data: comments
+        })
     } catch(err) {
         return res.status(500).json({message: "Cannot get comment data.", err: err.message})
     }

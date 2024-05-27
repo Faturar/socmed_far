@@ -18,20 +18,29 @@ import { TokenContext } from '../TokenContext'
 import createLike from '@/lib/likes/createLike'
 import deleteLike from '@/lib/likes/deleteLike'
 import { toast } from 'sonner'
+import getPostComments from '@/lib/comments/getPostComments'
+import createComment from '@/lib/comments/createComment'
 
 export default function PostItem({ post, userLikes, getUserLikes, getData}) {
   const router = useRouter();
 
   const {token, userData, setLoading} = useContext(TokenContext)
 
-  const [dropdown, setDropdown] = useState(false);
+ 
   const [liked, setLiked] = useState(false);
+  const [comment, setComment] = useState('');
   const [commentsOpen, setCommentOpen] = useState(false);
+  const [commentsData, setCommentsData] = useState([]);
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState(0);
+  
+  const [loadMore, setLoadMore] = useState(true);
   const [editImage, setEditImage] = useState(false);
   const [edit, setEdit] = useState(false);
 
   const [image, setImage] = useState(null)
   const [content, setContent] = useState(post.content)
+  const [dropdown, setDropdown] = useState(false);
 
   const api_url = process.env.NEXT_PUBLIC_API_STATIC;
 
@@ -120,12 +129,64 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
     router.refresh();
   }
 
-  const onClickComment = () => {
+  const onClickComment = async () => {
     setCommentOpen(!commentsOpen)
+
+    if(!commentsOpen) {
+      const res = await getPostComments(post.id, token, limit, offset);
+
+      setCommentsData(res.data)
+
+      setOffset(offset + 10)
+    } else {
+      setCommentsData([])
+      setOffset(0)
+    }
   }
 
-  const handleComment = async () => {
-    
+  const onClickLoadMoreComments = async () => {
+    const res = await getPostComments(post.id, token, limit, offset);
+
+    setCommentsData(commentsData => [...commentsData, ...res.data] );
+
+    if(parseInt(res.data.length) < 10) {
+      const offsetMin = parseInt(res.data.length) - 10;
+
+      setOffset(offset + offsetMin)
+
+      setLoadMore(false)
+    }
+
+    setOffset(offset + 10)
+
+    // console.log(offset)
+  }
+
+  const handleCreateComment = async () => {
+    if(!userData) {
+      return toast.error('Please Login To Comment!')
+    }
+
+    if(comment == '') {
+      return toast.error('Please write something!')
+    }
+
+    const data = {
+      userId: userData.id,
+      postId: post.id,
+      description: comment
+    }
+
+    const res = await createComment(data, token)
+    const newComment = [];
+
+    newComment.push(res.data);
+
+    console.log(res.data)
+  
+    setCommentsData(commentsData => [...newComment, ...commentsData] );
+
+    setComment('')
   }
 
   useEffect(() => { 
@@ -214,7 +275,7 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
           <div className="flex space-x-5 text-gray-600">
             <div className="flex">
               <button type="button" onClick={() => onClickLike(post.id, post.likes)}>
-                {liked ? <ThumbsUp size={24} weight='fill' className="text-blue-500 hover:scale-125 transition-all duration-300" /> : <ThumbsUp size={24} className="text-gray-500 hover:scale-125 transition-all duration-300" />}
+                {post.likes >= 1 && liked ? <ThumbsUp size={24} weight='fill' className="text-blue-500 hover:scale-125 transition-all duration-300" /> : <ThumbsUp size={24} className="text-gray-500 hover:scale-125 transition-all duration-300" />}
               </button>
               {post.likes > 0 ? <span className="ml-2">{post.likes}</span> : ''}
             </div>
@@ -222,7 +283,7 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
               <button type="button" onClick={() => onClickComment()}>
                 <ChatCircleDots size={24} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
               </button>
-              <span className="ml-2">{post.comments}</span>
+              {post.comments > 0 ? <span className="ml-2">{post.comments}</span> : ''}
             </div>
             <div className="w-full flex justify-end">
               <button type="button">
@@ -232,17 +293,20 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
           </div>
           
           {/* Comment Container */}
-          <div className={`flex flex-col ${commentsOpen ? '' : 'hidden'}`}>
+          <div className={`flex flex-col h-48 mt-4 overflow-y-scroll ${commentsOpen ? '' : 'hidden'}`}>
             {/* Comments item */}
-            <div className='flex bg-gray-100 rounded-xl mt-4 p-4'>
-              <div className='w-1/12'>
-                {userData ? <Image className="w-8 rounded-full object-cover" src={api_url + userData.profileImg} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full object-cover" src={profileImg} width={512} height={512} alt="Profile" />}
+            {commentsData.map(item => (
+              <div className='flex bg-gray-100 rounded-xl mb-2 p-4'>
+                <div className='w-1/12'>
+                  {item.profile_img ? <Image className="w-8 rounded-full object-cover" src={api_url + item.profile_img} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full object-cover" src={profileImg} width={512} height={512} alt="Profile" />}
+                </div>
+                <div className='w-11/12'>
+                  <h4 className='m-0 text-md'>{item.username}</h4>
+                  <p className='m-0 text-sm text-gray-600'>{item.description}</p>
+                </div>
               </div>
-              <div className='w-11/12'>
-                <h4 className='m-0 text-md'>Comments</h4>
-                <p className='m-0 text-sm text-gray-600'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum asperiores impedit possimus consectetur accusamus ipsam libero quas provident quaerat veniam voluptatem architecto, quos quisquam qui ullam ipsum quidem, iste aut!</p>
-              </div>
-            </div>
+            ))}
+            <button className={`text-blue-500 text-start ${!loadMore ? 'hidden' : ''}`} onClick={onClickLoadMoreComments}>Load More</button>
           </div>
 
           {/* Comment input */}
@@ -252,8 +316,8 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
                 {userData ? <Image className="w-8 rounded-full object-cover" src={api_url + userData.profileImg} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full object-cover" src={profileImg} width={512} height={512} alt="Profile" />}
               </div>
               
-              <input type="text" className="w-10/12 px-4 sm:px-2 md:px-0 bg-transparent outline-none" placeholder="Write a comment" />
-              <button type="button" className="w-1/12 text-gray-600 hover:text-blue-500 transition-all duration-300">
+              <input type="text" value={comment} onChange={e => setComment(e.target.value)} className="w-10/12 px-4 sm:px-2 md:px-0 bg-transparent outline-none" placeholder="Write a comment" />
+              <button type="button" onClick={handleCreateComment} className="w-1/12 text-gray-600 hover:text-blue-500 transition-all duration-300">
                 <PaperPlaneRight size={24} className="ml-auto" />
               </button>
             </div>
