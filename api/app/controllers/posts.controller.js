@@ -2,6 +2,7 @@ import fs from 'fs'
 import path, {dirname} from 'path'
 import { fileURLToPath } from 'url';
 import { getAllPosts, getPostById, createPostData, updatePostData, deletePostData } from '../models/posts.model.js'
+import { deletePostLikes, getLikeByPostId } from '../models/likes.model.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -98,8 +99,6 @@ export const update = async (req, res) => {
         // update post data
         const update = await updatePostData(id, data)
 
-        console.log(update)
-
         // get updated post data
         const [ post ] = await getPostById(id)
 
@@ -136,9 +135,11 @@ export const deletePost = async (req, res) => {
         }
 
         if(deleteData.affectedRows != 0) {
+            await deletePostLikes(id)
+
             return res.status(200).json({
                 message: "Success deleting post data!",
-                data: post
+                data: post,
             });
         } else {
             return res.status(404).json({

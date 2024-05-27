@@ -1,5 +1,4 @@
-import { getAllLikes, getLikeById, getLikeByPostId, createLikeData, deleteLikeData, getCheckLiked } from '../models/likes.model.js'
-import { getUserById } from '../models/users.model.js'
+import { getAllLikes, getLikeById, getLikeByPostId, createLikeData, deleteLikeData, getCheckLiked, getLikeUser } from '../models/likes.model.js'
 
 // Get likes
 export const getLikes = async (req, res) => {
@@ -16,7 +15,21 @@ export const getLikeByPost = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const [ like ] = await getLikeByPostId(id);
+        const like = await getLikeByPostId(id);
+
+        return res.status(200).json(like);
+    } catch(err) {
+        return res.status(500).json({message: "Cannot get like data.", err: err.message})
+    }
+}
+
+export const getUserLike = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const like = await getLikeUser(id);
+
+        console.log(like)
 
         return res.status(200).json(like);
     } catch(err) {

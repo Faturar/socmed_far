@@ -27,6 +27,16 @@ export const getLikeByPostId = async (id) => {
     }
 }
 
+export const getLikeUser = async (id) => {
+    try {
+        console.log(id)
+        const [rows] = await pool.query("SELECT post_id FROM likes WHERE user_id = ?", [id]);
+        return rows;
+    } catch(err) {
+        throw err;
+    }
+}
+
 export const getCheckLiked = async (userId, postId) => {
     try {
         const [rows] = await pool.query("SELECT * FROM likes WHERE post_id = ? AND user_id = ?", [postId, userId]);
@@ -67,6 +77,15 @@ export const deleteLikeData = async (id) => {
     try {
         const [ rows ] = await pool.query("DELETE FROM likes WHERE id = ?", [id])
 
+        return rows
+    } catch(err) {
+        return err.message
+    }
+}
+
+export const deletePostLikes = async (id) => {
+    try {
+        const [rows] = await pool.query("DELETE FROM likes WHERE post_id = ?", [id]);
         return rows
     } catch(err) {
         return err.message

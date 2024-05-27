@@ -14,6 +14,7 @@ export default async function createPost(data, token) {
       },
       body: fd,
   });
+  
 
   if (!res.ok) {
     throw new Error('Failed to fetch data');

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useContext } from 'react'
+import { useState, useRef, useContext, useEffect } from 'react'
 
 import Image from "next/image"
 import { useRouter } from 'next/navigation'
@@ -9,22 +9,24 @@ import { useRouter } from 'next/navigation'
 import deletePost from '../../lib/posts/deletePost'
 
 // Icon
-import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pencil, X } from 'phosphor-react'
+import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pencil, X, Heart, UserPlus } from 'phosphor-react'
 
 // Image
-import profileImg from '@/public/assets/image/profile1.png'
+import profileImg from '@/public/assets/image/default.png'
 import editPost from '@/lib/posts/editPost'
 import { TokenContext } from '../TokenContext'
 import createLike from '@/lib/likes/createLike'
-import getAllPosts from '@/lib/posts/getAllPosts'
 import deleteLike from '@/lib/likes/deleteLike'
+import { toast } from 'sonner'
 
-export default function PostItem({ post }) {
+export default function PostItem({ post, userLikes, getUserLikes, getData}) {
   const router = useRouter();
 
-  const {token, userData, setPosts, setLoading} = useContext(TokenContext)
+  const {token, userData, setLoading} = useContext(TokenContext)
 
   const [dropdown, setDropdown] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [commentsOpen, setCommentOpen] = useState(false);
   const [editImage, setEditImage] = useState(false);
   const [edit, setEdit] = useState(false);
 
@@ -47,8 +49,7 @@ export default function PostItem({ post }) {
     try {
       setLoading(true)
       await deletePost(id, token)
-      const posts = await getAllPosts()
-      setPosts(posts)
+      getData()
       setLoading(false)
     } catch (err) {
       console.log(err.message)
@@ -79,21 +80,26 @@ export default function PostItem({ post }) {
       setImage(null)
       setContent('')
       
-      const posts = await getAllPosts()
-      setPosts(posts)
+      getData()
     } catch(err) {
       console.log(err)
     } finally {
       setLoading(false)
     }
-}
+  }
 
   const onClickLike = async (postId, likes) => {
+    if(!userData) {
+      return toast.error('Please Login To Like!')
+    }
+
     const data = {
-      userId: userData.id,
+      userId: userData ? userData.id : null,
       postId,
       likes,
     }
+
+    setLiked(false)
 
     try {
       const res = await createLike(data, token)
@@ -102,15 +108,34 @@ export default function PostItem({ post }) {
         await deleteLike(res.like.id, token);
       }
 
-      const posts = await getAllPosts();
+      if(userData) {
+        getUserLikes()
+      }
 
-      return setPosts(posts)
+      return getData()
     } catch(err) {
       console.log(err.message)
     }
 
     router.refresh();
   }
+
+  const onClickComment = () => {
+    setCommentOpen(!commentsOpen)
+  }
+
+  const handleComment = async () => {
+    
+  }
+
+  useEffect(() => { 
+    userLikes.map(item => {
+        if (item.post_id == post.id) {
+          setLiked(true)
+        }
+      }
+    )
+  }, [userLikes])
 
   return (
     <div className="mb-8">
@@ -119,7 +144,7 @@ export default function PostItem({ post }) {
         <div className="flex justify-between items-center">
           <div className="flex"> 
             <div className="rounded-xl">
-              {post.user_profile_img ? <Image className="w-12 h-12 rounded-full object-cover" src={api_url + post.user_profile_img} width={512} height={512} alt="" /> : <Image className="w-12 h-12 rounded-full object-cover" src={profileImg} width={512} height={512} alt="" />}
+              {post ? <Image className="w-12 h-12 rounded-full object-cover" src={api_url + post.user_profile_img} width={512} height={512} alt="" /> : <Image className="w-12 h-12 rounded-full object-cover" src={profileImg} width={512} height={512} alt="" />}
             </div>
             <div className="ml-3">
               <h4>{post.user_username}</h4>
@@ -127,7 +152,13 @@ export default function PostItem({ post }) {
             </div>
           </div>
           
-          <div className={`relative text-gray-600 ${userData.id != post.user_id ? 'hidden' : ''}`}>
+          {/* User Follow Button */}
+          <button className={userData && userData.id == post.user_id || !userData ? 'hidden' : ''}>
+              <UserPlus className='text-gray-600' size={24} />
+          </button>
+
+          {/* Dropdown Button */}
+          <div className={`relative text-gray-600 ${userData && userData.id != post.user_id || !userData ? 'hidden' : ''}`}>
             <button className="" onMouseEnter={() => setDropdown(true)} onMouseLeave={() => setDropdown(false)}>
               <DotsThree size={24} />
             </button>
@@ -149,6 +180,9 @@ export default function PostItem({ post }) {
         {/* Content */}
         <div className="flex flex-col mt-4">
           {edit ? <span className='mb-2 text-red-500'>Edit mode active</span> : ''}
+          
+          <p className={`${post.image ? 'mb-4' : ''}${edit ? ' hidden' : ''}`}>{post.content}</p>
+          
           <div className="relative" onMouseEnter={() => setEditImage(true)} onMouseLeave={() => setEditImage(false)}>
             {post.image && image == null ? <Image src={api_url + post.image} width={1000} height={1000} className={`rounded-xl ${edit && editImage ? 'opacity-80':''}`} alt="" /> : ''}
 
@@ -156,8 +190,6 @@ export default function PostItem({ post }) {
             
             {edit && editImage ? <button className='px-6 py-2 bg-white text-blue-500 absolute -ml-10 top-1/2 left-1/2 rounded-lg' onClick={selectFile}>Change</button> : ''}
           </div>
-          <p className={`${post.image ? 'mt-4' : ''}${edit ? ' hidden' : ''}`}>{post.content}</p>
-          
 
           {/* edit */}
           <input ref={selectFileEl} type="file" className="hidden" onChange={imageFile} />
@@ -178,18 +210,19 @@ export default function PostItem({ post }) {
 
         {/* Footer */}
         <div className="flex flex-col mt-6">
+          {/* Action button */}
           <div className="flex space-x-5 text-gray-600">
             <div className="flex">
               <button type="button" onClick={() => onClickLike(post.id, post.likes)}>
-                <ThumbsUp size={24} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
+                {liked ? <ThumbsUp size={24} weight='fill' className="text-blue-500 hover:scale-125 transition-all duration-300" /> : <ThumbsUp size={24} className="text-gray-500 hover:scale-125 transition-all duration-300" />}
               </button>
-              <span className="ml-2">{post.likes}</span>
+              {post.likes > 0 ? <span className="ml-2">{post.likes}</span> : ''}
             </div>
             <div className="flex">
-              <button type="button">
+              <button type="button" onClick={() => onClickComment()}>
                 <ChatCircleDots size={24} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
               </button>
-              {/* <span className="ml-2">{post.comment.length}</span> */}
+              <span className="ml-2">{post.comments}</span>
             </div>
             <div className="w-full flex justify-end">
               <button type="button">
@@ -197,10 +230,26 @@ export default function PostItem({ post }) {
               </button>
             </div>
           </div>
-          <div className="mt-6 py-2 px-2 bg-gray-100 rounded-xl">
+          
+          {/* Comment Container */}
+          <div className={`flex flex-col ${commentsOpen ? '' : 'hidden'}`}>
+            {/* Comments item */}
+            <div className='flex bg-gray-100 rounded-xl mt-4 p-4'>
+              <div className='w-1/12'>
+                {userData ? <Image className="w-8 rounded-full object-cover" src={api_url + userData.profileImg} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full object-cover" src={profileImg} width={512} height={512} alt="Profile" />}
+              </div>
+              <div className='w-11/12'>
+                <h4 className='m-0 text-md'>Comments</h4>
+                <p className='m-0 text-sm text-gray-600'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum asperiores impedit possimus consectetur accusamus ipsam libero quas provident quaerat veniam voluptatem architecto, quos quisquam qui ullam ipsum quidem, iste aut!</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Comment input */}
+          <div className="mt-4 py-2 px-2 bg-gray-100 rounded-xl">
             <div className="flex justify-between items-center">
               <div className="w-1/12">
-                {userData && userData.profileImg ? <Image className="w-8 rounded-full object-cover" src={api_url + userData.profileImg} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full object-cover" src={profileImg} width={512} height={512} alt="Profile" />}
+                {userData ? <Image className="w-8 rounded-full object-cover" src={api_url + userData.profileImg} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full object-cover" src={profileImg} width={512} height={512} alt="Profile" />}
               </div>
               
               <input type="text" className="w-10/12 px-4 sm:px-2 md:px-0 bg-transparent outline-none" placeholder="Write a comment" />

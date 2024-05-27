@@ -6,6 +6,8 @@ import Image from "next/image"
 
 import { TokenContext } from '../TokenContext'
 
+import profileBg from '@/public/assets/image/defaultBg.png'
+
 function LeftSide() {
   const {token, userData} = useContext(TokenContext)
 
@@ -15,7 +17,7 @@ function LeftSide() {
     <div className="hidden lg:flex lg:w-1/4 pr-2">
         <div className={`w-full relative ${!token ? 'hidden' : ''}`}>
           <div className="sticky top-12 flex flex-col bg-white mb-6 drop-shadow-sm rounded-2xl text-gray-600">
-              <Image src={userData ? api_url + userData.profileBg : ''} width={512} height={200} alt="" className="rounded-t-xl h-16 object-cover" />
+              <Image src={userData ? api_url + userData.profileBg : profileBg} width={512} height={200} alt="" className="rounded-t-xl h-16 object-cover" />
               <div className="flex px-2">
                 <Image src={userData ? api_url + userData.profileImg : ''} width={512} height={512} alt="" className="ml-3 -mt-6 w-12 h-12 object-cover" />
               <div className="flex flex-col ml-3 mt-1">

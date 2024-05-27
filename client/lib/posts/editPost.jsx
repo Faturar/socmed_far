@@ -3,7 +3,7 @@ export default async function editPost(id, data, token) {
 
     fd.append("userId", data.userId);
     fd.append("image", data.image);
-    fd.append("content", data.content);
+    fd.append("content", data.content ? data.content : null);
     fd.append("likes", data.likes);
     fd.append("comments", data.comments ? data.comments : null);
     fd.append("shares", data.shares ? data.shares : null);

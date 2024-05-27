@@ -1,6 +1,6 @@
 // Image
-import profileImg from '../public/assets/image/profile1.png'
-import postImg from '../public/assets/image/post-image.png'
+import profileImg from '../public/assets/image/default.png'
+import postImg from '../public/assets/image/defaultBg.png'
 
 export const posts = [
     {

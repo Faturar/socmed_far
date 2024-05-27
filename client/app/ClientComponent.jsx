@@ -17,17 +17,24 @@ import RightSide from './components/RightSide'
 import { ImageSquare, PaperPlaneRight } from 'phosphor-react'
 
 // Image
-import profileImg from '@/public/assets/image/profile1.png'
+import profileImg from '@/public/assets/image/default.png'
 import Navbar from './Navbar'
 import { TokenContext } from './TokenContext'
+import getAllPosts from '@/lib/posts/getAllPosts'
+import { toast, Toaster } from 'sonner'
+import Posts from './components/Posts'
+import getAllUserLikes from '@/lib/likes/getAllUserLikes'
 
-
-export default function ClientComponent({children}) { 
-  const {token, login, userData} = useContext(TokenContext)
-  const [image, setImage] = useState(null)
-  const [content, setContent] = useState(null)
-
+export default function ClientComponent() { 
   const router = useRouter();
+  const {token, login, userData, setLoading} = useContext(TokenContext)
+
+  const [userLikes, setUserLikes] = useState([]);
+  const [posts, setPosts] = useState([]);
+
+  const [image, setImage] = useState(null)
+  const [content, setContent] = useState('')  
+
   const selectFileEl = useRef();
 
   const api_url = process.env.NEXT_PUBLIC_API_STATIC;
@@ -49,9 +56,19 @@ export default function ClientComponent({children}) {
     }
 
     try {
-      const res = await createPost(data, token);
+      if(content != '') {
+        const res = await createPost(data, token);
 
-      return
+        const posts = await getAllPosts()
+        setPosts(posts)
+
+        setContent('')
+        setImage(null)
+        
+        return toast.success(res.message, { duration: 2000 })
+      } else {
+        return toast.error('Please write something!')
+      }
     } catch(err) {
       console.log(err.message)
     }
@@ -61,9 +78,34 @@ export default function ClientComponent({children}) {
     router.refresh();
   }
 
+  const getData = async () => {
+    const res = await getAllPosts();
+
+    return setPosts(res)
+  }
+
+  const getUserLikes = async () => {
+    const res = await getAllUserLikes(userData ? userData.id : null, token);
+
+    return setUserLikes(res)
+  }
+
+  useEffect(() => {
+    setLoading(true)
+
+    getData()
+
+    if(userData) {
+      getUserLikes()
+    }
+
+    setLoading(false)
+  }, [])
+
   return (
     <section>
       <Navbar />
+      <Toaster position="top-center" richColors />
       <main className="container mx-auto flex justify-between pt-8">
         {/* Left side */}
         <LeftSide />
@@ -111,7 +153,7 @@ export default function ClientComponent({children}) {
             </div>
           </div>
 
-          {children}
+          <Posts posts={posts} setPosts={setPosts} userLikes={userLikes} setUserLikes={setUserLikes} getUserLikes={getUserLikes} getData={getData} />
         </div>
 
         {/* Right side */}

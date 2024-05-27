@@ -7,7 +7,7 @@ import Loading from "../components/Loading";
 
 // next
 export default function Page() {
-    const { setToken, setUserData, setLoading } = useContext(TokenContext);
+    const { setToken, setUserData, setLoading, setLogin } = useContext(TokenContext);
     const router = useRouter()
 
     useEffect(() => {
@@ -17,11 +17,12 @@ export default function Page() {
         window.localStorage.removeItem('user');
         setToken(null);
         setUserData(null);
+        setLogin(false);
       };
   
       clearTokenAndUserData();
       router.push('/')
     }, [setToken, setUserData]);
-  
+
     return <Loading />
   }

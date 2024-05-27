@@ -1,15 +1,12 @@
 // Components
 import ClientComponent from './ClientComponent'
 import Loading from './components/Loading'
-import Posts from './components/Posts'
 
-export default async function Page() {
+export default function Page() {
   return (
     <>
       <Loading />
-      <ClientComponent>
-        <Posts />
-      </ClientComponent>
+      <ClientComponent />
     </>
   )
 }
