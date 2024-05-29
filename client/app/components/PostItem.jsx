@@ -200,16 +200,16 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
 
   return (
     <div className="mb-8">
-      <div className="bg-white mx-4 sm:mx-0 p-6 drop-shadow-sm rounded-2xl overflow-hidden">
+      <div className="bg-white mx-lg-4 sm:mx-0 p-4 lg:p-6 drop-shadow-sm rounded-2xl overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div className="flex"> 
             <div className="rounded-xl">
-              {post ? <Image className="w-12 h-12 rounded-full object-cover" src={api_url + post.user_profile_img} width={512} height={512} alt="" /> : <Image className="w-12 h-12 rounded-full object-cover" src={profileImg} width={512} height={512} alt="" />}
+              {post ? <Image className="w-10 h-10 lg:w-12 lg:h-12 rounded-full object-cover" src={api_url + post.user_profile_img} width={512} height={512} alt="" /> : <Image className="w-10 h-10 lg:w-12 lg:h-12 rounded-full object-cover" src={profileImg} width={512} height={512} alt="" />}
             </div>
             <div className="ml-3">
-              <h4>{post.user_username}</h4>
-              <span className="text-sm text-gray-400">{post.user_role}</span>
+              <h4 className='text-sm lg:text-lg'>{post.user_username}</h4>
+              <span className="text-xs lg:text-sm text-gray-400">{post.user_role}</span>
             </div>
           </div>
           
@@ -242,7 +242,7 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
         <div className="flex flex-col mt-4">
           {edit ? <span className='mb-2 text-red-500'>Edit mode active</span> : ''}
           
-          <p className={`${post.image ? 'mb-4' : ''}${edit ? ' hidden' : ''}`}>{post.content}</p>
+          <p className={`text-sm lg:text-base ${post.image ? 'mb-4' : ''}${edit ? ' hidden' : ''}`}>{post.content}</p>
           
           <div className="relative" onMouseEnter={() => setEditImage(true)} onMouseLeave={() => setEditImage(false)}>
             {post.image && image == null ? <Image src={api_url + post.image} width={1000} height={1000} className={`rounded-xl ${edit && editImage ? 'opacity-80':''}`} alt="" /> : ''}

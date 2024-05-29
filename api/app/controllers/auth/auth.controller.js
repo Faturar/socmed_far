@@ -2,6 +2,13 @@ import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import { getUserById, getUserUsername, getUserEmail, createUserData } from '../../models/users.model.js'
 
+export const tokenCheck = async (req, res) => {
+    return res.status(200).json({
+        status: true,
+        message: 'Token verified'
+    })
+}
+
 export const register = async (req, res) => {
     const { username, name, email, password } = req.body;
 

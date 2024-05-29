@@ -7,7 +7,7 @@ import { TokenContext } from '../TokenContext'
 
 function RightSide() {
   const {login} = useContext(TokenContext)
-  
+
   return (
     <div className="hidden lg:flex lg:w-1/4 pl-2">
       <div className={`w-full relative ${!login ? 'hidden' : ''}`}>

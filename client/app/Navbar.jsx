@@ -15,14 +15,16 @@ import logo from '../public/assets/image/logo.png'
 
 export default function Navbar() {
     const { login } = useContext(TokenContext);
+
+    const isPhone = window.innerWidth < 768;
   
     return (
         <nav className='bg-white text-gray-600 drop-shadow-sm'>
-            <div className="container flex justify-start md:justify-between mx-auto p-6 md:px-8 lg:px-0">
+            <div className="container flex justify-between mx-auto p-6 md:px-8 lg:px-0">
             <div className='w-1/4 pr-6 lg:pr-0 flex items-center'>
                 <Image src={logo} alt="Logo" />
             </div>
-            <div className='w-2/4 flex justify-between items-center px-6'>
+            <div className={`w-2/4 flex justify-between items-center px-6 ${isPhone ? 'hidden' : ''}`}>
                 <Link href="/" className=''>
                     <House size={28} className='text-blue-500' />
                 </Link>
@@ -38,14 +40,14 @@ export default function Navbar() {
             </div>
             <div className='w-1/4 flex justify-end items-center md:pl-6'>
                 {!login ? (
-                <Link href="/login" className='flex items-center ml-3'>
+                <Link href="/login" className='flex items-center text-sm lg:text-base ml-3'>
                     Login
-                    <SignIn size={28} className='ml-2' />
+                    <SignIn size={isPhone ? 24 : 28} className='ml-2' />
                 </Link>
                 ) : (
-                <Link href="/logout" className='flex items-center text-sm ml-3'>
+                <Link href="/logout" className='flex items-center text-sm lg:text-base ml-3'>
                     Logout
-                    <SignOut size={28} className='ml-2' />
+                    <SignOut size={isPhone ? 24 : 28} className='ml-2' />
                 </Link>
                 )}
             </div>

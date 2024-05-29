@@ -24,10 +24,12 @@ import getAllPosts from '@/lib/posts/getAllPosts'
 import { toast, Toaster } from 'sonner'
 import Posts from './components/Posts'
 import getAllUserLikes from '@/lib/likes/getAllUserLikes'
+import tokenCheck from '@/lib/auth/tokenCheck'
+import Footer from './Footer'
 
 export default function ClientComponent() { 
   const router = useRouter();
-  const {token, login, userData, setLoading} = useContext(TokenContext)
+  const {token, setToken, login, userData, setUserData, setLoading} = useContext(TokenContext)
 
   const [userLikes, setUserLikes] = useState([]);
   const [posts, setPosts] = useState([]);
@@ -86,16 +88,26 @@ export default function ClientComponent() {
 
   const getUserLikes = async () => {
     const res = await getAllUserLikes(userData ? userData.id : null, token);
+    return setUserLikes(res && res.data ? res.data : [])
+  }
 
-    return setUserLikes(res.data)
+  const loginCheck = async () => {
+    const res = await tokenCheck(token)
+
+    if(res.status == false) {
+      setToken(null)
+      setUserData(null)
+    }
   }
 
   useEffect(() => {
+    loginCheck()
+
     setLoading(true)
 
     getData()
 
-    if(userData) {
+    if(userData && token) {
       getUserLikes()
     }
 
@@ -106,15 +118,15 @@ export default function ClientComponent() {
     <section>
       <Navbar />
       <Toaster position="top-center" richColors />
-      <main className="container mx-auto flex justify-between pt-8">
+      <main className="container mx-auto flex justify-between pt-4 lg:pt-8">
         {/* Left side */}
         <LeftSide />
 
         {/* Main side */}
         <div className="lg:w-2/4 px-6">
-          <div className={`bg-white mx-4 sm:mx-0 mb-6 pt-6 pb-0 drop-shadow-sm rounded-2xl overflow-hidden text-gray-600 ${!login ? 'hidden' : ''}`}>            
+          <div className={`bg-white mx-0 lg:mx-4 sm:mx-0 mb-6 pt-6 pb-0 drop-shadow-sm rounded-2xl overflow-hidden text-gray-600 ${!login ? 'hidden' : ''}`}>            
             {/* Add Post */}
-            <div className="px-6 flex">
+            <div className="px-4 lg:px-6 flex">
               <div className="rounded-xl">
               {userData ? <Image className="w-10 h-10 object-cover" src={api_url + userData.profileImg} width={512} height={512} alt="" /> : <Image className="w-10 h-10 object-cover" src={profileImg} width={512} height={512} alt="" />}
               </div>
@@ -124,7 +136,7 @@ export default function ClientComponent() {
             </div>
 
             {/* Image Preview */}
-            <div className="flex rounded-xl px-6 pt-0 pb-6">
+            <div className="flex rounded-xl px-4 lg:px-6 pt-0 pb-4">
               {image ? <Image className="w-fit rounded-xl" src={URL.createObjectURL(image)} width={1080} height={1080} alt="" /> : ''}
             </div>
             
@@ -133,7 +145,7 @@ export default function ClientComponent() {
               <input ref={selectFileEl} type="file" className="hidden" onChange={imageFile} disabled={!login} />
                
               <button
-                className={`flex items-center ml-6 py-4 ${
+                className={`flex items-center ml-4 lg:ml-6 py-4 ${
                   !login ? 'text-gray-500 translate-none' : 'hover:text-blue-500 transition-all duration-300'
                 }`}
                 disabled={!login}
@@ -144,7 +156,7 @@ export default function ClientComponent() {
               </button>
 
               <button
-                className={`bg-blue-100 px-6 py-3 ${!login ? 'disabled:bg-gray' : ''}`}
+                className={`bg-blue-100 px-4 lg:px-6 py-3 ${!login ? 'disabled:bg-gray' : ''}`}
                 onClick={create}
                 disabled={!login}
               >
@@ -159,6 +171,7 @@ export default function ClientComponent() {
         {/* Right side */}
         <RightSide />
       </main>
+      <Footer />
     </section>
   )
 }
