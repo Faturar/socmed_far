@@ -29,7 +29,6 @@ export const getLikeByPostId = async (id) => {
 
 export const getLikeUser = async (id) => {
     try {
-        console.log(id)
         const [rows] = await pool.query("SELECT post_id FROM likes WHERE user_id = ?", [id]);
         return rows;
     } catch(err) {

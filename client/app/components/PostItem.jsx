@@ -132,6 +132,12 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
   const onClickComment = async () => {
     setCommentOpen(!commentsOpen)
 
+    if(commentsData.length == 0) {
+      setLoadMore(false)
+      setCommentOpen(false)
+      return toast('No Comments Yet!')
+    }
+
     if(!commentsOpen) {
       const res = await getPostComments(post.id, token, limit, offset);
 
@@ -293,7 +299,7 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
           </div>
           
           {/* Comment Container */}
-          <div className={`flex flex-col h-48 mt-4 overflow-y-scroll ${commentsOpen ? '' : 'hidden'}`}>
+          <div className={`flex flex-col max-h-48 mt-4 overflow-y-scroll ${commentsOpen ? '' : 'hidden'}`}>
             {/* Comments item */}
             {commentsData.map(item => (
               <div className='flex bg-gray-100 rounded-xl mb-2 p-4'>
