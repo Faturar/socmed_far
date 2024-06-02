@@ -88,7 +88,8 @@ export default function ClientComponent() {
 
   const getUserLikes = async () => {
     const res = await getAllUserLikes(userData ? userData.id : null, token);
-    return setUserLikes(res && res.data ? res.data : [])
+    
+    setUserLikes(res && res.data ? res.data : [])
   }
 
   const loginCheck = async () => {
@@ -124,7 +125,7 @@ export default function ClientComponent() {
 
         {/* Main side */}
         <div className="lg:w-2/4 px-6">
-          <div className={`bg-white mx-0 lg:mx-4 sm:mx-0 mb-6 pt-6 pb-0 drop-shadow-sm rounded-2xl overflow-hidden text-gray-600 ${!login ? 'hidden' : ''}`}>            
+          <div className={`bg-white mx-0 sm:mx-0 mb-6 pt-6 pb-0 drop-shadow-sm rounded-2xl overflow-hidden text-gray-600 ${!login ? 'hidden' : ''}`}>            
             {/* Add Post */}
             <div className="px-4 lg:px-6 flex">
               <div className="rounded-xl">
@@ -167,7 +168,7 @@ export default function ClientComponent() {
 
           <Posts posts={posts} setPosts={setPosts} userLikes={userLikes} setUserLikes={setUserLikes} getUserLikes={getUserLikes} getData={getData} />
         </div>
-
+        
         {/* Right side */}
         <RightSide />
       </main>

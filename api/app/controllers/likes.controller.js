@@ -1,4 +1,5 @@
 import { getAllLikes, getLikeById, getLikeByPostId, createLikeData, deleteLikeData, getCheckLiked, getLikeUser } from '../models/likes.model.js'
+import { getPostById, updatePostData } from '../models/posts.model.js';
 
 // Get likes
 export const getLikes = async (req, res) => {
@@ -48,27 +49,27 @@ export const create = async (req, res) => {
     try {
         const { userId, postId } = req.body;
 
-        const data = { userId, postId }
+        const checkLike = await getCheckLiked(userId, postId);
+        const [post] = await getPostById(postId);
 
-        const checkLike = await getCheckLiked(userId, postId)
+        post.userId = userId;
 
-        if(checkLike.length > 0) {
-            return res.status(200).json({
-                status: false,
-                message: "You already like the post!",
-                like: checkLike[0]
-            })
+        if (checkLike.length > 0) {
+            await deleteLikeData(checkLike[0].id);
+            post.likes--;
         } else {
-            const likeId = await createLikeData(data)
-            
-            const [ like ] = await getLikeById(likeId);
+            await createLikeData(userId, postId);
 
-            return res.status(201).json({
-                status: true,
-                message: "Success creating like data!",
-                data: like
-            })
+            post.likes++;
         }
+
+        await updatePostData(post.id, post);
+
+        return res.status(200).json({
+            status: Boolean(checkLike),
+            message: checkLike ? "You already like the post!" : "Success creating like data!",
+            data: checkLike || (await getLikeById(checkLike ? checkLike.id : post.likes))[0]
+        });
     } catch(err) {
         return res.status(500).json({message: "Cannot create like data.", err: err.message})
     }

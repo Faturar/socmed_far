@@ -1,4 +1,5 @@
 import { getAllComments, getCommentById, createCommentData, updateCommentData, deleteCommentData, getPostComments } from '../models/comments.model.js'
+import { getPostById, updatePostData } from '../models/posts.model.js';
 
 // Get comments
 export const getComments = async (req, res) => {
@@ -96,8 +97,18 @@ export const deleteComment = async (req, res) => {
         const id = req.params.id
 
         const [ comment ] = await getCommentById(id)
+        const [post] = await getPostById(comment.post_id);
 
         const deleteData = await deleteCommentData(id)
+
+        console.log(post)
+        console.log(comment)
+        console.log(deleteData)
+
+        post.userId = post.user_id;
+        post.comments--;
+
+        await updatePostData(post.id, post);
 
         if(deleteData.affectedRows != 0) {
             return res.status(200).json({

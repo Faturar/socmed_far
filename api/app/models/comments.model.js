@@ -32,6 +32,7 @@ export const getPostComments = async (id, limit, offset) => {
             LIMIT ? 
             OFFSET ?
         `, [id, limit, offset]);
+
         return rows
     } catch(err) {
         return err.message

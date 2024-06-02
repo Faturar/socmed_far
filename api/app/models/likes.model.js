@@ -46,15 +46,11 @@ export const getCheckLiked = async (userId, postId) => {
     }
 }
 
-export const createLikeData = async (data) => {
+export const createLikeData = async (userId, postId) => {
     try {
-        const { userId, postId } = data;
-
         const [ rows ] = await pool.query("INSERT INTO likes (user_id, post_id, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)", [userId, postId]);
 
-        
-    
-        return rows.insertId
+        return rows
     } catch(err) {
         return err.message
     }

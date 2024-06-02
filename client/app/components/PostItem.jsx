@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import deletePost from '../../lib/posts/deletePost'
 
 // Icon
-import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pencil, X, Heart, UserPlus } from 'phosphor-react'
+import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pencil, X, UserPlus } from 'phosphor-react'
 
 // Image
 import profileImg from '@/public/assets/image/default.png'
@@ -20,6 +20,7 @@ import deleteLike from '@/lib/likes/deleteLike'
 import { toast } from 'sonner'
 import getPostComments from '@/lib/comments/getPostComments'
 import createComment from '@/lib/comments/createComment'
+import deleteComments from '@/lib/comments/deleteComment'
 
 export default function PostItem({ post, userLikes, getUserLikes, getData}) {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   
-  const [loadMore, setLoadMore] = useState(true);
+  const [loadMore, setLoadMore] = useState(false);
   const [editImage, setEditImage] = useState(false);
   const [edit, setEdit] = useState(false);
 
@@ -97,57 +98,54 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
     }
   }
 
-  const onClickLike = async (postId, likes) => {
-    if(!userData) {
-      return toast.error('Please Login To Like!')
+  const onClickLike = async () => {
+    if (!userData) {
+      return toast.error('Please Login To Like!');
     }
-
+  
     const data = {
       userId: userData ? userData.id : null,
-      postId,
-      likes,
-    }
-
-    setLiked(false)
-
+      postId: post.id,
+      likes: post.likes,
+    };
+  
     try {
-      const res = await createLike(data, token)
-
-      if(res.status == false) {
-        await deleteLike(res.like.id, token);
+      const res = await createLike(data, token);
+  
+      if (res.status == false) {
+        await deleteLike(res.data.id, token);
+        setLiked(false);
+      } else {
+        setLiked(true);
       }
-
-      if(userData) {
-        getUserLikes()
-      }
-
-      return getData()
-    } catch(err) {
-      console.log(err.message)
+  
+      getUserLikes();
+      return getData();
+    } catch (err) {
+      console.log(err.message);
     }
-
+  
     router.refresh();
-  }
+  };
 
   const onClickComment = async () => {
-    setCommentOpen(!commentsOpen)
-
-    if(commentsData.length == 0) {
-      setLoadMore(false)
-      setCommentOpen(false)
-      return toast('No Comments Yet!')
-    }
-
     if(!commentsOpen) {
       const res = await getPostComments(post.id, token, limit, offset);
 
       setCommentsData(res.data)
 
+      if(res.data.length == 0) {
+        setCommentOpen(false)
+        return toast('No Comments Yet!')
+      }
+      
       setOffset(offset + 10)
     } else {
       setCommentsData([])
       setOffset(0)
     }
+
+    return setCommentOpen(!commentsOpen)
   }
 
   const onClickLoadMoreComments = async () => {
@@ -161,14 +159,14 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
       setOffset(offset + offsetMin)
 
       setLoadMore(false)
+    } else {
+      setLoadMore(true)
     }
 
     setOffset(offset + 10)
-
-    // console.log(offset)
   }
 
-  const handleCreateComment = async () => {
+  const handleCreateComment = async (comments) => {
     if(!userData) {
       return toast.error('Please Login To Comment!')
     }
@@ -180,29 +178,37 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
     const data = {
       userId: userData.id,
       postId: post.id,
-      description: comment
+      description: comment,
+      comments: post.comments + 1
     }
 
     const res = await createComment(data, token)
     const newComment = [];
 
     newComment.push(res.data);
-
-    console.log(res.data)
   
     setCommentsData(commentsData => [...newComment, ...commentsData] );
 
     setComment('')
   }
 
-  useEffect(() => { 
-    userLikes.map(item => {
-        if (item.post_id == post.id) {
-          setLiked(true)
-        }
+  const onClickDeleteComment = async (id) => {
+    const res = await deleteComments(id, token)
+
+    const getComments = await getPostComments(post.id, token, limit, offset);
+
+    setCommentsData(getComments.data);
+    
+    return toast.success(res.message)
+  }
+
+  useEffect(() => {
+    userLikes.map((item) => {
+      if (item.post_id == post.id) {
+        setLiked(true);
       }
-    )
-  }, [userLikes])
+    });
+  }, [userLikes]);
 
   return (
     <div className="mb-8">
@@ -280,15 +286,17 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
           {/* Action button */}
           <div className="flex space-x-5 text-gray-600">
             <div className="flex">
-              <button type="button" onClick={() => onClickLike(post.id, post.likes)}>
+              <button type="button" onClick={() => onClickLike()}>
                 {post.likes >= 1 && liked ? <ThumbsUp size={24} weight='fill' className="text-blue-500 hover:scale-125 transition-all duration-300" /> : <ThumbsUp size={24} className="text-gray-500 hover:scale-125 transition-all duration-300" />}
               </button>
+
               {post.likes > 0 ? <span className="ml-2">{post.likes}</span> : ''}
             </div>
             <div className="flex">
               <button type="button" onClick={() => onClickComment()}>
                 <ChatCircleDots size={24} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
               </button>
+              
               {post.comments > 0 ? <span className="ml-2">{post.comments}</span> : ''}
             </div>
             <div className="w-full flex justify-end">
@@ -302,14 +310,21 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
           <div className={`flex flex-col max-h-48 mt-4 overflow-y-scroll ${commentsOpen ? '' : 'hidden'}`}>
             {/* Comments item */}
             {commentsData.map(item => (
-              <div className='flex bg-gray-100 rounded-xl mb-2 p-4'>
-                <div className='w-1/12'>
+              <div className='flex bg-gray-100 rounded-xl mb-2 p-4' key={item.id}>
+                <div className='w-1/12 flex items-center'>
                   {item.profile_img ? <Image className="w-8 rounded-full object-cover" src={api_url + item.profile_img} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full object-cover" src={profileImg} width={512} height={512} alt="Profile" />}
                 </div>
-                <div className='w-11/12'>
+                <div className='w-10/12'>
                   <h4 className='m-0 text-md'>{item.username}</h4>
                   <p className='m-0 text-sm text-gray-600'>{item.description}</p>
                 </div>
+                {userData && userData.id == item.user_id ? 
+                  <div className="w-1/12 flex items-center justify-center">
+                    <button className='text-red-500' onClick={() => onClickDeleteComment(item.id)}>
+                      <Trash size={24} />
+                    </button>
+                  </div>
+                : ''}
               </div>
             ))}
             <button className={`text-blue-500 text-start ${!loadMore ? 'hidden' : ''}`} onClick={onClickLoadMoreComments}>Load More</button>
@@ -323,7 +338,7 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
               </div>
               
               <input type="text" value={comment} onChange={e => setComment(e.target.value)} className="w-10/12 px-4 sm:px-2 md:px-0 bg-transparent outline-none" placeholder="Write a comment" />
-              <button type="button" onClick={handleCreateComment} className="w-1/12 text-gray-600 hover:text-blue-500 transition-all duration-300">
+              <button type="button" onClick={() =>handleCreateComment()} className="w-1/12 text-gray-600 hover:text-blue-500 transition-all duration-300">
                 <PaperPlaneRight size={24} className="ml-auto" />
               </button>
             </div>
