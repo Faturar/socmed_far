@@ -28,6 +28,8 @@ import tokenCheck from '@/lib/auth/tokenCheck'
 import Footer from './Footer'
 
 export default function ClientComponent() { 
+  const api_url = process.env.NEXT_PUBLIC_API_STATIC;
+
   const router = useRouter();
   const {token, setToken, login, userData, setUserData, setLoading} = useContext(TokenContext)
 
@@ -38,8 +40,6 @@ export default function ClientComponent() {
   const [content, setContent] = useState('')  
 
   const selectFileEl = useRef();
-
-  const api_url = process.env.NEXT_PUBLIC_API_STATIC;
 
   const selectFile = () => {
     selectFileEl.current.click();

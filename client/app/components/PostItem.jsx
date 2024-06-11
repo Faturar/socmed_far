@@ -1,37 +1,39 @@
 "use client"
 
-import { useState, useRef, useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef, useState } from "react";
 
-import Image from "next/image"
-import { useRouter } from 'next/navigation'
+import Image from "next/image";
+import { useRouter } from 'next/navigation';
 
-// Lib
-import deletePost from '../../lib/posts/deletePost'
+import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pencil, X, UserPlus, PencilSimple } from 'phosphor-react';
 
-// Icon
-import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pencil, X, UserPlus } from 'phosphor-react'
+import CommentItem from './CommentItem';
 
-// Image
-import profileImg from '@/public/assets/image/default.png'
-import editPost from '@/lib/posts/editPost'
-import { TokenContext } from '../TokenContext'
-import createLike from '@/lib/likes/createLike'
-import deleteLike from '@/lib/likes/deleteLike'
-import { toast } from 'sonner'
-import getPostComments from '@/lib/comments/getPostComments'
-import createComment from '@/lib/comments/createComment'
-import deleteComments from '@/lib/comments/deleteComment'
+import deletePost from '../../lib/posts/deletePost';
+import editPost from '../../lib/posts/editPost';
+import createLike from '../../lib/likes/createLike';
+import deleteLike from '../../lib/likes/deleteLike';
+import getPostComments from '../../lib/comments/getPostComments';
+import createComment from '../../lib/comments/createComment';
+
+import profileImg from '@/public/assets/image/default.png';
+
+import { TokenContext } from '../TokenContext';
+import { toast } from 'sonner';
 
 export default function PostItem({ post, userLikes, getUserLikes, getData}) {
+  const api_url = process.env.NEXT_PUBLIC_API_STATIC;
+
   const router = useRouter();
 
   const {token, userData, setLoading} = useContext(TokenContext)
-
  
   const [liked, setLiked] = useState(false);
+  
   const [comment, setComment] = useState('');
   const [commentsOpen, setCommentOpen] = useState(false);
   const [commentsData, setCommentsData] = useState([]);
+  const [postComments, setPostComments] = useState(post.comments);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   
@@ -42,8 +44,6 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
   const [image, setImage] = useState(null)
   const [content, setContent] = useState(post.content)
   const [dropdown, setDropdown] = useState(false);
-
-  const api_url = process.env.NEXT_PUBLIC_API_STATIC;
 
   const selectFileEl = useRef();
 
@@ -166,7 +166,7 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
     setOffset(offset + 10)
   }
 
-  const handleCreateComment = async (comments) => {
+  const handleCreateComment = async () => {
     if(!userData) {
       return toast.error('Please Login To Comment!')
     }
@@ -187,19 +187,19 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
 
     newComment.push(res.data);
   
-    setCommentsData(commentsData => [...newComment, ...commentsData] );
+    setCommentsData(commentsData => [...newComment, ...commentsData]);
 
     setComment('')
+
+    setPostComments(postComments + 1)
+
+    setCommentOpen(true)
   }
 
-  const onClickDeleteComment = async (id) => {
-    const res = await deleteComments(id, token)
-
-    const getComments = await getPostComments(post.id, token, limit, offset);
-
-    setCommentsData(getComments.data);
+  const getCommentsData = async () => {
+    const res = await getPostComments(post.id, token, limit, offset);
     
-    return toast.success(res.message)
+    setCommentsData(res.data);
   }
 
   useEffect(() => {
@@ -208,6 +208,8 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
         setLiked(true);
       }
     });
+
+    getCommentsData()
   }, [userLikes]);
 
   return (
@@ -297,7 +299,7 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
                 <ChatCircleDots size={24} className="hover:text-blue-500 hover:scale-125 transition-all duration-300" />
               </button>
               
-              {post.comments > 0 ? <span className="ml-2">{post.comments}</span> : ''}
+              {postComments > 0 ? <span className="ml-2">{postComments}</span> : ''}
             </div>
             <div className="w-full flex justify-end">
               <button type="button">
@@ -310,22 +312,7 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
           <div className={`flex flex-col max-h-48 mt-4 overflow-y-scroll ${commentsOpen ? '' : 'hidden'}`}>
             {/* Comments item */}
             {commentsData.map(item => (
-              <div className='flex bg-gray-100 rounded-xl mb-2 p-4' key={item.id}>
-                <div className='w-1/12 flex items-center'>
-                  {item.profile_img ? <Image className="w-8 rounded-full object-cover" src={api_url + item.profile_img} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full object-cover" src={profileImg} width={512} height={512} alt="Profile" />}
-                </div>
-                <div className='w-10/12'>
-                  <h4 className='m-0 text-md'>{item.username}</h4>
-                  <p className='m-0 text-sm text-gray-600'>{item.description}</p>
-                </div>
-                {userData && userData.id == item.user_id ? 
-                  <div className="w-1/12 flex items-center justify-center">
-                    <button className='text-red-500' onClick={() => onClickDeleteComment(item.id)}>
-                      <Trash size={24} />
-                    </button>
-                  </div>
-                : ''}
-              </div>
+              <CommentItem item={item} post={post} commentsData={commentsData} setCommentsData={setCommentsData} postComments={postComments} setPostComments={setPostComments} key={item.id} />
             ))}
             <button className={`text-blue-500 text-start ${!loadMore ? 'hidden' : ''}`} onClick={onClickLoadMoreComments}>Load More</button>
           </div>
