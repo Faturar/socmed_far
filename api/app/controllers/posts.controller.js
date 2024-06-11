@@ -93,12 +93,12 @@ export const update = async (req, res) => {
 
         // init data to update
         const data = { 
-            userId, 
-            image,
-            content: content && content != 'null' ? content : oldPost.content,
-            likes: likes && likes != 'null' ? likes : oldLikes,
-            comments: comments && comments != 'null' ? comments : oldComments,
-            shares: shares &&shares != 'null' ? shares : oldShares,
+            userId: userId ?? oldPost.userId, 
+            image: image ?? oldPost.image,
+            content: content && content !== 'null' ? content : oldPost.content,
+            likes: likes !== 'null' ? Number(likes) : oldLikes,
+            comments: comments !== 'null' ? Number(comments) : oldComments,
+            shares: shares !== 'null' ? Number(shares) : oldShares,
             created_at: oldPost.created_at,
         }
 

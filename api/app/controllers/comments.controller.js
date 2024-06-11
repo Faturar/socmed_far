@@ -19,7 +19,7 @@ export const getComment = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const [ comments ] = await getCommentById(id);
+        const [ comment ] = await getCommentById(id);
 
         return res.status(200).json({
             message: "Success get comment data!",
@@ -56,6 +56,13 @@ export const create = async (req, res) => {
 
         const [ comment ] = await getCommentById(commentId);
 
+        const [post] = await getPostById(postId);
+
+        post.userId = post.user_id;
+        post.comments = post.comments+1;
+
+        await updatePostData(post.id, post);
+
         return res.status(201).json({
             message: "Success creating comment data!",
             data: comment
@@ -68,15 +75,15 @@ export const create = async (req, res) => {
 export const update = async (req, res) => {
     try {
         const id = req.params.id
-        const { userId, postId, description } = req.body;
-
-        const data = { userId, postId, description }
-
-        const update = await updateCommentData(id, data)
+        const { description } = req.body;
 
         // updated comment data
         const [ comment ] = await getCommentById(id)
 
+        const data = { userId: comment.user_id, postId: comment.post_id, description }
+
+        const update = await updateCommentData(id, data)
+        
         if(update.affectedRows != 0) {
             return res.status(200).json({
                 message: "Success updating comment data!",
@@ -101,12 +108,11 @@ export const deleteComment = async (req, res) => {
 
         const deleteData = await deleteCommentData(id)
 
-        console.log(post)
-        console.log(comment)
-        console.log(deleteData)
-
         post.userId = post.user_id;
-        post.comments--;
+
+        if(post.comments >= 1) {
+            post.comments--;
+        }
 
         await updatePostData(post.id, post);
 

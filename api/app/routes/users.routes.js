@@ -1,12 +1,14 @@
 import express from 'express'
 import imageUpload from '../controllers/imageUpload.controller.js'
-import { getUsers, getUser, create, update, deleteUser } from '../controllers/users.controller.js';
+import { getUsers, getUser, create, update, deleteUser, getUserRecomendations } from '../controllers/users.controller.js';
 import verifyToken from '../controllers/auth/verifyToken.js'
 
 export default app => {
     let router = express.Router();
 
     router.get("/", verifyToken, getUsers);
+
+    router.get("/recomendations", verifyToken, getUserRecomendations);
 
     router.get("/:id", verifyToken, getUser);
 

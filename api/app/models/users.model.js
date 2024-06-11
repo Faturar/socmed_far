@@ -2,7 +2,7 @@ import pool from '../db/connect.js'
 
 export const getAllUsers = async () => {
     try {
-        const [ rows ] = await pool.query("SELECT * FROM users")
+        const [ rows ] = await pool.query("SELECT id, profile_bg, profile_img, username, name, role, email, address, created_at, updated_at FROM users")
         return rows
     } catch(err){
         return err.message
@@ -11,7 +11,7 @@ export const getAllUsers = async () => {
 
 export const getUserById = async (id) => {
     try {
-        const [ rows ] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
+        const [ rows ] = await pool.query("SELECT id, profile_bg, profile_img, username, name, role, email, address, created_at, updated_at FROM users WHERE id = ?", [id]);
         return rows
     } catch(err) {
         return err.message
@@ -30,13 +30,23 @@ export const getUserUsername = async (username) => {
 
 export const getUserEmail = async (email) => {
     try {
-        const [ rows ] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
+        const [ rows ] = await pool.query("SELECT id, profile_bg, profile_img, username, name, role, email, address, created_at, updated_at FROM users WHERE email = ?", [email])
 
         return rows[0]
     } catch(err) {
         return err.message
     }
 }
+
+export const getUserRecomendation = async () => {
+    try {
+        const [ rows ] = await pool.query("SELECT id, profile_img, username, name, role, email FROM users LIMIT 6");
+
+        return rows;
+    } catch (err) {
+        return err.message;
+    }
+};
 
 export const createUserData = async (data) => {
     try {

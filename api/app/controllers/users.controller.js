@@ -7,7 +7,7 @@ const __dirname = dirname(__filename);
 
 import bcrypt from 'bcrypt'
 
-import { getAllUsers, getUserById, getUserUsername, getUserEmail, createUserData, updateUserData, deleteUserData } from '../models/users.model.js'
+import { getAllUsers, getUserById, getUserUsername, getUserEmail, createUserData, updateUserData, deleteUserData, getUserRecomendation } from '../models/users.model.js'
 
 // Get users
 export const getUsers = async (req, res) => {
@@ -38,20 +38,34 @@ export const getUser = async (req, res) => {
     }
 }
 
-export const getUserByUsername = async (req, res) => {
-    try {
-        const username = req.params.username;
+// export const getUserByUsername = async (req, res) => {
+//     try {
+//         const username = req.params.username;
 
-        const [ user ] = await getUserUsername(username);
+//         const [ user ] = await getUserUsername(username);
+
+//         return res.status(200).json({
+//             message: "Success get all user data!",
+//             data: user
+//         })
+//     } catch(err) {
+//         return res.status(500).json({message: "Cannot get user data.", err: err.message})
+//     }
+// }
+
+export const getUserRecomendations = async (req, res) => {
+    try {
+        const users = await getUserRecomendation();
 
         return res.status(200).json({
-            message: "Success get all user data!",
-            data: user
+            message: "Success get all user recomendation data!",
+            data: users
         })
     } catch(err) {
         return res.status(500).json({message: "Cannot get user data.", err: err.message})
     }
 }
+
 
 export const create = async (req, res) => {    
     try {

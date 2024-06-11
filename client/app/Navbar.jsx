@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import Image from 'next/image'
 import Link from 'next/link'
@@ -16,7 +16,18 @@ import logo from '../public/assets/image/logo.png'
 export default function Navbar() {
     const { login } = useContext(TokenContext);
 
-    const isPhone = window.innerWidth < 768;
+    const [isPhone, setIsPhone] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsPhone(window.innerWidth < 768);
+        };
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
   
     return (
         <nav className='bg-white text-gray-600 drop-shadow-sm'>
