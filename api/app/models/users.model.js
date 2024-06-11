@@ -11,7 +11,7 @@ export const getAllUsers = async () => {
 
 export const getUserById = async (id) => {
     try {
-        const [ rows ] = await pool.query("SELECT id, profile_bg, profile_img, username, name, role, email, address, created_at, updated_at FROM users WHERE id = ?", [id]);
+        const [ rows ] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
         return rows
     } catch(err) {
         return err.message
@@ -62,9 +62,9 @@ export const createUserData = async (data) => {
 
 export const updateUserData = async (id, data) => {
     try {
-        const { profileBg, profileImg, username, name, role, email, password, address, created_at } = data;
+        const { profileBg, profileImg, username, name, role, email, password, address, followers, created_at } = data;
 
-        const [ rows ] = await pool.query("UPDATE users SET profile_bg = ?, profile_img = ?, username = ?, name = ?, role = ?, email = ?, password = ?, address = ?, created_at = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", [profileBg, profileImg, username, name, role, email, password, address, created_at, id])
+        const [ rows ] = await pool.query("UPDATE users SET profile_bg = ?, profile_img = ?, username = ?, name = ?, role = ?, email = ?, password = ?, address = ?, followers = ?, created_at = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", [profileBg, profileImg, username, name, role, email, password, address, followers, created_at, id])
 
         return rows
     } catch(err) {
