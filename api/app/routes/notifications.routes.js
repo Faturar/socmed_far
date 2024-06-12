@@ -1,16 +1,17 @@
 import express from 'express'
 import { getNotifications, getNotification, create, deleteNotification } from '../controllers/notifications.controller.js';
+import verifyToken from '../controllers/auth/verifyToken.js'
 
 export default app => {
     let router = express.Router();
 
-    router.get("/", getNotifications);
+    router.get("/", verifyToken, getNotifications);
 
-    router.get("/:id", getNotification);
+    router.get("/:id", verifyToken, getNotification);
 
-    router.post("/", create);
+    router.post("/", verifyToken, create);
 
-    router.delete("/:id", deleteNotification);
+    router.delete("/:id", verifyToken, deleteNotification);
 
     app.use("/api/notifications", router);
 } 
