@@ -9,7 +9,7 @@ import Image from 'next/image';
 import editComment from '@/lib/comments/editComment';
 import { toast } from 'sonner';
 
-function CommentItem({item, post, commentsData, setCommentsData, postComments, setPostComments}) {
+function CommentItem({item, commentsData, setCommentsData, postComments, setPostComments}) {
     const api_url = process.env.NEXT_PUBLIC_API_STATIC;
 
     const {token, userData} = useContext(TokenContext)
@@ -48,7 +48,11 @@ function CommentItem({item, post, commentsData, setCommentsData, postComments, s
     return (
         <div className='flex bg-gray-100 rounded-xl mb-2 p-4' key={comment.id}>
             <div className='w-1/12 flex items-center'>
-                {comment.profile_img ? <Image className="w-8 rounded-full object-cover" src={api_url + comment.profile_img} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full object-cover" src={profileImg} width={512} height={512} alt="Profile" />}
+                <Image 
+                    className="w-8 rounded-full object-cover"
+                    src={comment.profile_img ? api_url + comment.profile_img : profileImg}
+                    width={512} height={512} alt="Profile"
+                />
             </div>
             <div className={`w-10/12`}>
                 <h4 className={`m-0 text-md`}>{comment.username}</h4>

@@ -102,7 +102,9 @@ export default function ClientComponent() {
   }
 
   useEffect(() => {
-    loginCheck()
+    if(token) {
+      loginCheck()
+    }
 
     setLoading(true)
 
@@ -129,7 +131,11 @@ export default function ClientComponent() {
             {/* Add Post */}
             <div className="px-4 lg:px-6 flex">
               <div className="rounded-xl">
-              {userData ? <Image className="w-10 h-10 object-cover" src={api_url + userData.profileImg} width={512} height={512} alt="" /> : <Image className="w-10 h-10 object-cover" src={profileImg} width={512} height={512} alt="" />}
+                <Image 
+                  className="w-10 h-10 object-cover"
+                  src={userData && userData.profileImg ? api_url + userData.profileImg : profileImg}
+                  width={512} height={512} alt=""
+                />
               </div>
               <div className="w-full">
                 <textarea value={content} onChange={(e) => setContent(e.target.value)} disabled={!login} className="h-16 lg:h-20 ml-4 py-2 px-3 w-full outline-none disabled:bg-gray-100" placeholder="Write something ..."></textarea>

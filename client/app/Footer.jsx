@@ -34,9 +34,6 @@ export default function Footer() {
                 <Bell size={24} />
             </Link>
             <Link href="/">
-                <ChatsCircle size={24} />
-            </Link>
-            <Link href="/">
                 <User size={24} />
             </Link>
         </footer>

@@ -1,5 +1,5 @@
-export default async function createLike(data, token) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/likes`, {
+export default async function createFollow(data, token) {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/follows`, {
         method: "POST", 
         mode: "cors",
         headers: {
@@ -9,7 +9,7 @@ export default async function createLike(data, token) {
         },
         body: JSON.stringify({
             userId: data.userId,
-            postId: data.postId
+            userFollowedId: data.userFollowedId
         })
     });
 

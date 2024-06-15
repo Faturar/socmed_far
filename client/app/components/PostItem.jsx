@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
 
-import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pencil, X, UserPlus, PencilSimple } from 'phosphor-react';
+import { PaperPlaneRight, DotsThree, ThumbsUp, ChatCircleDots, Share, Trash, Pencil, X, UserPlus } from 'phosphor-react';
 
 import CommentItem from './CommentItem';
 
@@ -219,7 +219,11 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
         <div className="flex justify-between items-center">
           <div className="flex"> 
             <div className="rounded-xl">
-              {post ? <Image className="w-10 h-10 lg:w-12 lg:h-12 rounded-full object-cover" src={api_url + post.user_profile_img} width={512} height={512} alt="" /> : <Image className="w-10 h-10 lg:w-12 lg:h-12 rounded-full object-cover" src={profileImg} width={512} height={512} alt="" />}
+              <Image 
+                className="w-10 h-10 lg:w-12 lg:h-12 rounded-full object-cover"
+                 src={post && post.user_profile_img ? api_url + post.user_profile_img : profileImg}
+                width={512} height={512} alt=""
+              />
             </div>
             <div className="ml-3">
               <h4 className='text-sm lg:text-lg'>{post.user_username}</h4>
@@ -321,7 +325,11 @@ export default function PostItem({ post, userLikes, getUserLikes, getData}) {
           <div className="mt-4 py-2 px-2 bg-gray-100 rounded-xl">
             <div className="flex justify-between items-center">
               <div className="w-1/12">
-                {userData ? <Image className="w-8 rounded-full object-cover" src={api_url + userData.profileImg} width={512} height={512} alt="Profile" /> : <Image className="w-8 rounded-full object-cover" src={profileImg} width={512} height={512} alt="Profile" />}
+                <Image 
+                  className="w-8 rounded-full object-cover"
+                  src={userData && userData.profileImg ? api_url + userData.profileImg : profileImg}
+                  width={512} height={512} alt="Profile"
+                />
               </div>
               
               <input type="text" value={comment} onChange={e => setComment(e.target.value)} className="w-10/12 px-4 sm:px-2 md:px-0 bg-transparent outline-none" placeholder="Write a comment" />

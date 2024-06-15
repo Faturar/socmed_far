@@ -39,11 +39,8 @@ export default function Navbar() {
                 <Link href="/" className=''>
                     <House size={28} className='text-blue-500' />
                 </Link>
-                <Link href="/">
+                <Link href="/notification">
                     <Bell size={28} />
-                </Link>
-                <Link href="/">
-                    <ChatsCircle size={28} />
                 </Link>
                 <Link href="/">
                     <User size={28} />
